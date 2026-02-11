@@ -17,7 +17,7 @@ export default function TextReveal({ text, className = "", delay = 0 }: TextReve
             className="inline-block"
             initial={{ y: "100%" }}
             whileInView={{ y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: false, amount: 0.3 }}
             transition={{ delay: delay + i * 0.05, duration: 0.5, ease: [0.33, 1, 0.68, 1] }}
           >
             {word}

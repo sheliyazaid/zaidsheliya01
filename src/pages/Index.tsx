@@ -1,6 +1,6 @@
 import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
-import { ArrowDown, ExternalLink, Send, MessageCircle, Palette, Code, PenTool, Globe, Layout, Figma, Smartphone, Terminal, Github, Linkedin, Mail, Heart, ArrowUp } from "lucide-react";
+import { ArrowDown, ExternalLink, Send, MessageCircle, Palette, Code, PenTool, Globe, Layout, Figma, Smartphone, Terminal, Github, Linkedin, Mail, Heart, ArrowUp, Instagram } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionHeading from "../components/SectionHeading";
@@ -85,7 +85,7 @@ function SkillBar({ name, level, delay }: { name: string; level: number; delay: 
     <motion.div
       initial={{ opacity: 0, x: -20 }}
       whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true }}
+      viewport={{ once: false, amount: 0.3 }}
       transition={{ delay, duration: 0.5 }}
       className="space-y-2"
     >
@@ -97,7 +97,7 @@ function SkillBar({ name, level, delay }: { name: string; level: number; delay: 
         <motion.div
           initial={{ width: 0 }}
           whileInView={{ width: `${level}%` }}
-          viewport={{ once: true }}
+          viewport={{ once: false, amount: 0.3 }}
           transition={{ delay: delay + 0.2, duration: 0.8, ease: "easeOut" }}
           className="h-full rounded-full bg-foreground/60"
         />
@@ -112,7 +112,7 @@ function Counter({ value, label }: { value: string; label: string }) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
+      viewport={{ once: false, amount: 0.3 }}
       className="text-center"
     >
       <div className="font-heading text-4xl md:text-5xl font-bold text-foreground">{value}</div>
@@ -129,6 +129,37 @@ const Index = () => {
   const [activeFilter, setActiveFilter] = useState("All");
   const [form, setForm] = useState({ name: "", phone: "", message: "" });
   const [showTop, setShowTop] = useState(false);
+  
+  // Typing animation
+  const roles = ["Graphic Designer", "Frontend Developer", "UI/UX Designer", "Creative Thinker", "Brand Strategist"];
+  const [roleIndex, setRoleIndex] = useState(0);
+  const [charIndex, setCharIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [typedText, setTypedText] = useState("");
+
+  useEffect(() => {
+    const currentRole = roles[roleIndex];
+    const speed = isDeleting ? 40 : 80;
+
+    const timeout = setTimeout(() => {
+      if (!isDeleting) {
+        setTypedText(currentRole.slice(0, charIndex + 1));
+        setCharIndex((c) => c + 1);
+        if (charIndex + 1 === currentRole.length) {
+          setTimeout(() => setIsDeleting(true), 1500);
+        }
+      } else {
+        setTypedText(currentRole.slice(0, charIndex - 1));
+        setCharIndex((c) => c - 1);
+        if (charIndex - 1 === 0) {
+          setIsDeleting(false);
+          setRoleIndex((r) => (r + 1) % roles.length);
+        }
+      }
+    }, speed);
+
+    return () => clearTimeout(timeout);
+  }, [charIndex, isDeleting, roleIndex]);
 
   const filtered = activeFilter === "All" ? projects : projects.filter((p) => p.category === activeFilter);
 
@@ -182,9 +213,10 @@ const Index = () => {
           {
             scrollTrigger: {
               trigger: section,
-              start: "top 75%",
-              end: "top 35%",
-              scrub: 0.5,
+              start: "top 80%",
+              end: "top 30%",
+              scrub: 0.8,
+              toggleActions: "play reverse play reverse",
             },
             y: 0,
             opacity: 1,
@@ -195,9 +227,14 @@ const Index = () => {
 
       gsap.utils.toArray<HTMLElement>(".gsap-line").forEach((el) => {
         gsap.fromTo(el, { scaleX: 0 }, {
-          scrollTrigger: { trigger: el, start: "top 85%" },
+          scrollTrigger: {
+            trigger: el,
+            start: "top 85%",
+            end: "top 50%",
+            scrub: 0.5,
+            toggleActions: "play reverse play reverse",
+          },
           scaleX: 1,
-          duration: 1,
           ease: "power3.out",
         });
       });
@@ -263,9 +300,10 @@ const Index = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7, duration: 0.6 }}
-            className="mt-6 text-lg text-muted-foreground md:text-xl tracking-wide font-light"
+            className="mt-6 text-lg text-muted-foreground md:text-xl tracking-wide font-light font-mono"
           >
-            Graphic Designer <span className="text-foreground/30 mx-2">/</span> Frontend Developer
+            <span className="text-foreground">{typedText}</span>
+            <span className="animate-pulse text-foreground/60">|</span>
           </motion.p>
 
           <motion.div
@@ -294,8 +332,13 @@ const Index = () => {
             transition={{ delay: 1.3 }}
             className="mt-12 flex items-center justify-center gap-6"
           >
-            {[Github, Linkedin, Mail].map((Icon, i) => (
-              <MagneticButton key={i} className="text-muted-foreground/50 hover:text-foreground transition-colors duration-300">
+            {[
+              { Icon: Github, href: "https://github.com/sheliyazaid" },
+              { Icon: Linkedin, href: "https://www.linkedin.com/in/zaid-sheliya/" },
+              { Icon: Instagram, href: "https://www.instagram.com/zaxd._.shelxya/" },
+              { Icon: Mail, href: "mailto:zaidsheliya16@gmail.com" },
+            ].map(({ Icon, href }) => (
+              <MagneticButton key={href} onClick={() => window.open(href, "_blank")} className="text-muted-foreground/50 hover:text-foreground transition-colors duration-300">
                 <Icon size={18} />
               </MagneticButton>
             ))}
@@ -583,12 +626,14 @@ const Index = () => {
               <h4 className="text-xs tracking-[0.2em] text-foreground uppercase font-mono mb-6">Connect</h4>
               <div className="flex gap-4 mb-6">
                 {[
-                  { Icon: Github, label: "GitHub" },
-                  { Icon: Linkedin, label: "LinkedIn" },
-                  { Icon: Mail, label: "Email" },
-                ].map(({ Icon, label }) => (
+                  { Icon: Github, label: "GitHub", href: "https://github.com/sheliyazaid" },
+                  { Icon: Linkedin, label: "LinkedIn", href: "https://www.linkedin.com/in/zaid-sheliya/" },
+                  { Icon: Instagram, label: "Instagram", href: "https://www.instagram.com/zaxd._.shelxya/" },
+                  { Icon: Mail, label: "Email", href: "mailto:zaidsheliya16@gmail.com" },
+                ].map(({ Icon, label, href }) => (
                   <MagneticButton
                     key={label}
+                    onClick={() => window.open(href, "_blank")}
                     className="flex h-10 w-10 items-center justify-center rounded-lg border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all"
                   >
                     <Icon size={16} />
@@ -596,7 +641,7 @@ const Index = () => {
                 ))}
               </div>
               <p className="text-sm text-muted-foreground">
-                zaidsheliya@gmail.com
+                zaidsheliya16@gmail.com
               </p>
             </div>
           </div>
