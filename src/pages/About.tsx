@@ -1,8 +1,11 @@
 import { motion } from "framer-motion";
 import PageTransition from "../components/PageTransition";
 import SectionHeading from "../components/SectionHeading";
-import GlassCard from "../components/GlassCard";
+import TiltCard from "../components/TiltCard";
 import { Palette, Code, Layout, Figma, Globe, Smartphone } from "lucide-react";
+import { Suspense, lazy } from "react";
+
+const ParticleBackground = lazy(() => import("../components/ParticleBackground"));
 
 const designSkills = [
   { name: "Adobe Photoshop", level: 90 },
@@ -60,14 +63,16 @@ const highlights = [
 export default function About() {
   return (
     <PageTransition>
-      <div className="min-h-screen pt-24 pb-20">
+      <Suspense fallback={null}>
+        <ParticleBackground />
+      </Suspense>
+      <div className="relative z-10 min-h-screen pt-24 pb-20">
         <div className="container mx-auto px-6">
           <SectionHeading
             title="About Me"
             subtitle="A passionate creative who bridges the gap between design and development."
           />
 
-          {/* Intro */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -82,37 +87,43 @@ export default function About() {
             </p>
           </motion.div>
 
-          {/* Highlights */}
           <div className="grid grid-cols-3 md:grid-cols-6 gap-4 mb-20">
             {highlights.map((item, i) => (
-              <GlassCard key={item.label} delay={i * 0.1} className="flex flex-col items-center gap-3 text-center py-8">
-                <item.icon size={24} className="text-foreground/70" />
-                <span className="text-xs text-muted-foreground tracking-wider">{item.label}</span>
-              </GlassCard>
+              <TiltCard key={item.label} delay={i * 0.1} className="">
+                <div className="flex flex-col items-center gap-3 text-center py-4">
+                  <motion.div whileHover={{ rotate: 360 }} transition={{ duration: 0.6 }}>
+                    <item.icon size={24} className="text-foreground/70" />
+                  </motion.div>
+                  <span className="text-xs text-muted-foreground tracking-wider">{item.label}</span>
+                </div>
+              </TiltCard>
             ))}
           </div>
 
-          {/* Skills */}
           <div className="grid gap-12 md:grid-cols-2 max-w-4xl mx-auto">
-            <GlassCard hover={false} className="space-y-6">
-              <div className="flex items-center gap-3 mb-4">
-                <Palette size={20} className="text-foreground/70" />
-                <h3 className="font-heading text-xl font-semibold text-foreground">Graphic Design</h3>
+            <TiltCard delay={0.1} glare>
+              <div className="space-y-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <Palette size={20} className="text-foreground/70" />
+                  <h3 className="font-heading text-xl font-semibold text-foreground">Graphic Design</h3>
+                </div>
+                {designSkills.map((skill, i) => (
+                  <SkillBar key={skill.name} {...skill} delay={i * 0.1} />
+                ))}
               </div>
-              {designSkills.map((skill, i) => (
-                <SkillBar key={skill.name} {...skill} delay={i * 0.1} />
-              ))}
-            </GlassCard>
+            </TiltCard>
 
-            <GlassCard hover={false} className="space-y-6">
-              <div className="flex items-center gap-3 mb-4">
-                <Code size={20} className="text-foreground/70" />
-                <h3 className="font-heading text-xl font-semibold text-foreground">Frontend Development</h3>
+            <TiltCard delay={0.2} glare>
+              <div className="space-y-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <Code size={20} className="text-foreground/70" />
+                  <h3 className="font-heading text-xl font-semibold text-foreground">Frontend Development</h3>
+                </div>
+                {devSkills.map((skill, i) => (
+                  <SkillBar key={skill.name} {...skill} delay={i * 0.1} />
+                ))}
               </div>
-              {devSkills.map((skill, i) => (
-                <SkillBar key={skill.name} {...skill} delay={i * 0.1} />
-              ))}
-            </GlassCard>
+            </TiltCard>
           </div>
         </div>
       </div>

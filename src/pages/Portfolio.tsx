@@ -2,8 +2,11 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import PageTransition from "../components/PageTransition";
 import SectionHeading from "../components/SectionHeading";
-import GlassCard from "../components/GlassCard";
+import TiltCard from "../components/TiltCard";
 import { ExternalLink } from "lucide-react";
+import { Suspense, lazy } from "react";
+
+const ParticleBackground = lazy(() => import("../components/ParticleBackground"));
 
 const categories = ["All", "Graphic Design", "Frontend"];
 
@@ -24,14 +27,16 @@ export default function Portfolio() {
 
   return (
     <PageTransition>
-      <div className="min-h-screen pt-24 pb-20">
+      <Suspense fallback={null}>
+        <ParticleBackground />
+      </Suspense>
+      <div className="relative z-10 min-h-screen pt-24 pb-20">
         <div className="container mx-auto px-6">
           <SectionHeading
             title="Portfolio"
             subtitle="Selected works showcasing design and development expertise."
           />
 
-          {/* Filter */}
           <div className="flex justify-center gap-4 mb-12">
             {categories.map((cat) => (
               <button
@@ -48,7 +53,6 @@ export default function Portfolio() {
             ))}
           </div>
 
-          {/* Grid */}
           <motion.div layout className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-w-6xl mx-auto">
             <AnimatePresence mode="popLayout">
               {filtered.map((project, i) => (
@@ -60,23 +64,25 @@ export default function Portfolio() {
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.4, delay: i * 0.05 }}
                 >
-                  <GlassCard className="group h-full flex flex-col justify-between min-h-[220px]">
-                    <div>
-                      <span className="text-[10px] tracking-[0.2em] text-muted-foreground uppercase">
-                        {project.category}
-                      </span>
-                      <h3 className="font-heading text-lg font-semibold text-foreground mt-2">
-                        {project.title}
-                      </h3>
-                      <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                        {project.description}
-                      </p>
+                  <TiltCard className="h-full">
+                    <div className="group flex flex-col justify-between min-h-[180px]">
+                      <div>
+                        <span className="text-[10px] tracking-[0.2em] text-muted-foreground uppercase">
+                          {project.category}
+                        </span>
+                        <h3 className="font-heading text-lg font-semibold text-foreground mt-2">
+                          {project.title}
+                        </h3>
+                        <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+                          {project.description}
+                        </p>
+                      </div>
+                      <div className="mt-4 flex items-center gap-2 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <ExternalLink size={14} />
+                        <span className="text-xs tracking-wider">View Project</span>
+                      </div>
                     </div>
-                    <div className="mt-4 flex items-center gap-2 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <ExternalLink size={14} />
-                      <span className="text-xs tracking-wider">View Project</span>
-                    </div>
-                  </GlassCard>
+                  </TiltCard>
                 </motion.div>
               ))}
             </AnimatePresence>
