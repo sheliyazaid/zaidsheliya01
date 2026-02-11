@@ -766,33 +766,33 @@ const Index = () => {
             <div className="glass-strong gradient-border rounded-2xl p-10 relative overflow-hidden noise">
               <form onSubmit={handleSubmit} className="space-y-7 relative z-10">
                 <div className="space-y-2">
-                  <label className="text-[9px] tracking-[0.3em] text-muted-foreground/50 uppercase font-mono">Name</label>
+                  <label className="text-[9px] tracking-[0.3em] text-muted-foreground uppercase font-mono">Name</label>
                   <input
                     required
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="w-full rounded-xl border border-border/30 bg-secondary/20 px-5 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/20 focus:outline-none focus:border-foreground/15 transition-all font-mono"
+                    className="w-full rounded-xl border border-border/40 bg-secondary/20 px-5 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-foreground/25 transition-all font-mono"
                     placeholder="your name"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[9px] tracking-[0.3em] text-muted-foreground/50 uppercase font-mono">Phone</label>
+                  <label className="text-[9px] tracking-[0.3em] text-muted-foreground uppercase font-mono">Phone</label>
                   <input
                     required
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    className="w-full rounded-xl border border-border/30 bg-secondary/20 px-5 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/20 focus:outline-none focus:border-foreground/15 transition-all font-mono"
+                    className="w-full rounded-xl border border-border/40 bg-secondary/20 px-5 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-foreground/25 transition-all font-mono"
                     placeholder="your phone"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[9px] tracking-[0.3em] text-muted-foreground/50 uppercase font-mono">Message</label>
+                  <label className="text-[9px] tracking-[0.3em] text-muted-foreground uppercase font-mono">Message</label>
                   <textarea
                     required
                     rows={4}
                     value={form.message}
                     onChange={(e) => setForm({ ...form, message: e.target.value })}
-                    className="w-full rounded-xl border border-border/30 bg-secondary/20 px-5 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/20 focus:outline-none focus:border-foreground/15 transition-all resize-none font-mono"
+                    className="w-full rounded-xl border border-border/40 bg-secondary/20 px-5 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-foreground/25 transition-all resize-none font-mono"
                     placeholder="tell me about your project..."
                   />
                 </div>
@@ -804,7 +804,7 @@ const Index = () => {
                   Send via WhatsApp
                 </MagneticButton>
               </form>
-              <div className="mt-6 flex items-center justify-center gap-2 text-muted-foreground/30 relative z-10">
+              <div className="mt-6 flex items-center justify-center gap-2 text-muted-foreground/60 relative z-10">
                 <MessageCircle size={11} />
                 <span className="text-[8px] tracking-[0.25em] font-mono uppercase">Opens WhatsApp directly</span>
               </div>
@@ -821,7 +821,7 @@ const Index = () => {
               <p className="font-heading text-3xl font-extrabold tracking-wider text-foreground mb-4">
                 ZS<span className="text-gradient-gold">.</span>
               </p>
-              <p className="text-sm text-muted-foreground/40 leading-relaxed max-w-xs">
+              <p className="text-sm text-muted-foreground/70 leading-relaxed max-w-xs">
                 A creative developer crafting digital experiences that blend stunning design with clean, performant code.
               </p>
             </div>
@@ -832,7 +832,7 @@ const Index = () => {
                   <button
                     key={id}
                     onClick={() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" })}
-                    className="block text-sm text-muted-foreground/35 hover:text-foreground transition-colors duration-300 capitalize tracking-wide"
+                    className="block text-sm text-muted-foreground/60 hover:text-foreground transition-colors duration-300 capitalize tracking-wide"
                   >
                     {id === "hero" ? "Home" : id}
                   </button>
@@ -851,24 +851,24 @@ const Index = () => {
                   <MagneticButton
                     key={label}
                     onClick={() => window.open(href, "_blank")}
-                    className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/20 text-muted-foreground/30 hover:text-foreground hover:border-foreground/15 hover:glow-sm transition-all duration-500"
+                    className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/30 text-muted-foreground/60 hover:text-foreground hover:border-foreground/20 hover:glow-sm transition-all duration-500"
                   >
                     <Icon size={14} />
                   </MagneticButton>
                 ))}
               </div>
-              <p className="text-[11px] text-muted-foreground/30 font-mono tracking-wide">
+              <p className="text-[11px] text-muted-foreground/60 font-mono tracking-wide">
                 zaidsheliya16@gmail.com
               </p>
             </div>
           </div>
           <div className="section-divider" />
           <div className="py-8 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-[9px] text-muted-foreground/30 tracking-[0.15em] font-mono">
+            <p className="text-[9px] text-muted-foreground/50 tracking-[0.15em] font-mono">
               © {new Date().getFullYear()} Zaid Sheliya. All rights reserved.
             </p>
-            <p className="text-[9px] text-muted-foreground/30 tracking-[0.15em] font-mono flex items-center gap-1.5">
-              Designed & Built with <Heart size={9} className="text-foreground/20" /> in India
+            <p className="text-[9px] text-muted-foreground/50 tracking-[0.15em] font-mono flex items-center gap-1.5">
+              Designed & Built with <Heart size={9} className="text-foreground/40" /> in India
             </p>
           </div>
         </div>
