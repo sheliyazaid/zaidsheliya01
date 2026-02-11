@@ -193,6 +193,20 @@
     );
   }
 
+  .text-gradient-premium {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(
+      135deg,
+      hsl(0 0% 100%) 0%,
+      hsl(40 50% 85%) 25%,
+      hsl(35 70% 65%) 50%,
+      hsl(40 50% 85%) 75%,
+      hsl(0 0% 100%) 100%
+    );
+    background-size: 200% 200%;
+    animation: premium-shimmer 6s ease-in-out infinite;
+  }
+
   .text-stroke {
     -webkit-text-stroke: 1px hsla(0 0% 100% / 0.15);
     color: transparent;
@@ -545,4 +559,10 @@
   50% { transform: translate(12%, 9%); }
   70% { transform: translate(9%, 4%); }
   90% { transform: translate(-1%, 7%); }
+}
+
+@keyframes premium-shimmer {
+  0% { background-position: 200% 200%; }
+  50% { background-position: 0% 0%; }
+  100% { background-position: 200% 200%; }
 }
