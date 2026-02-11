@@ -1,13 +1,13 @@
 import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
-import { ArrowDown, ExternalLink, Send, MessageCircle, Palette, Code, PenTool, Globe, Layout, Figma, Smartphone, Terminal, Github, Linkedin, Mail, Heart, ArrowUp, Instagram } from "lucide-react";
+import { ArrowDown, ExternalLink, Send, MessageCircle, Palette, Code, PenTool, Globe, Layout, Figma, Smartphone, Terminal, Github, Linkedin, Mail, Heart, ArrowUp, Instagram, Sparkles, Eye } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionHeading from "../components/SectionHeading";
 import TiltCard from "../components/TiltCard";
 import MagneticButton from "../components/MagneticButton";
 import ScrollProgress from "../components/ScrollProgress";
-
+import CursorFollower from "../components/CursorFollower";
 
 // Project images
 import imgBrand from "@/assets/project-brand.jpg";
@@ -64,10 +64,10 @@ const projects = [
 ];
 
 const services = [
-  { icon: Palette, title: "UI/UX Design", description: "Crafting intuitive and beautiful user interfaces that put the user experience first." },
-  { icon: PenTool, title: "Logo Design", description: "Creating memorable brand identities that communicate your values." },
-  { icon: Globe, title: "Website Design", description: "Designing modern, responsive websites that convert visitors into customers." },
-  { icon: Code, title: "Frontend Development", description: "Building fast, interactive web applications with React & TypeScript." },
+  { icon: Palette, title: "UI/UX Design", description: "Crafting intuitive and beautiful user interfaces that put the user experience first.", accent: "from-purple-500/20 to-blue-500/20" },
+  { icon: PenTool, title: "Logo Design", description: "Creating memorable brand identities that communicate your values.", accent: "from-amber-500/20 to-orange-500/20" },
+  { icon: Globe, title: "Website Design", description: "Designing modern, responsive websites that convert visitors into customers.", accent: "from-cyan-500/20 to-teal-500/20" },
+  { icon: Code, title: "Frontend Development", description: "Building fast, interactive web applications with React & TypeScript.", accent: "from-emerald-500/20 to-green-500/20" },
 ];
 
 const stats = [
@@ -99,7 +99,7 @@ function SkillBar({ name, level, delay }: { name: string; level: number; delay: 
           whileInView={{ width: `${level}%` }}
           viewport={{ once: false, amount: 0.3 }}
           transition={{ delay: delay + 0.2, duration: 0.8, ease: "easeOut" }}
-          className="h-full rounded-full bg-foreground/60"
+          className="h-full rounded-full bg-gradient-to-r from-foreground/40 to-foreground/70"
         />
       </div>
     </motion.div>
@@ -113,11 +113,38 @@ function Counter({ value, label }: { value: string; label: string }) {
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: false, amount: 0.3 }}
-      className="text-center"
+      className="text-center group"
     >
-      <div className="font-heading text-4xl md:text-5xl font-bold text-foreground">{value}</div>
-      <div className="mt-2 text-xs tracking-[0.2em] text-muted-foreground uppercase font-mono">{label}</div>
+      <div className="font-heading text-5xl md:text-6xl font-bold text-foreground transition-all duration-500 group-hover:text-gradient">{value}</div>
+      <div className="mt-3 text-[10px] tracking-[0.25em] text-muted-foreground uppercase font-mono">{label}</div>
     </motion.div>
+  );
+}
+
+// ─── MARQUEE ────────────────────────────────────
+function InfiniteMarquee() {
+  const items = ["DESIGN", "⬡", "DEVELOP", "⬡", "CREATE", "⬡", "INNOVATE", "⬡", "INSPIRE", "⬡"];
+  return (
+    <div className="overflow-hidden py-8 border-y border-border/50 my-0 relative">
+      <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-background to-transparent z-10" />
+      <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-background to-transparent z-10" />
+      <motion.div
+        animate={{ x: ["0%", "-50%"] }}
+        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+        className="flex gap-12 whitespace-nowrap"
+      >
+        {[...items, ...items, ...items, ...items].map((item, i) => (
+          <span
+            key={i}
+            className={`text-3xl md:text-5xl font-heading font-bold tracking-wider ${
+              item === "⬡" ? "text-muted-foreground/20 text-lg" : "text-foreground/[0.07]"
+            }`}
+          >
+            {item}
+          </span>
+        ))}
+      </motion.div>
+    </div>
   );
 }
 
@@ -168,8 +195,7 @@ const Index = () => {
   const heroY = useTransform(scrollY, [0, 800], [0, 350]);
   const heroOpacity = useTransform(scrollY, [0, 500], [1, 0]);
   const heroScale = useTransform(scrollY, [0, 800], [1, 0.8]);
-  
-  const aboutScale = useTransform(scrollY, [200, 900], [0.9, 1]);
+  const aboutScale = useTransform(scrollY, [200, 900], [0.92, 1]);
   const aboutY = useTransform(scrollY, [200, 900], [120, 0]);
 
   useEffect(() => {
@@ -256,7 +282,8 @@ const Index = () => {
   };
 
   return (
-    <div ref={mainRef}>
+    <div ref={mainRef} className="relative">
+      <CursorFollower />
       <ScrollProgress />
       
       <Suspense fallback={null}>
@@ -265,6 +292,10 @@ const Index = () => {
 
       {/* ═══════════════════ HERO ═══════════════════ */}
       <section ref={heroRef} id="hero" className="relative flex min-h-screen items-center justify-center overflow-hidden">
+        {/* Ambient glow orbs */}
+        <div className="orbital-glow w-[500px] h-[500px] bg-foreground/5 -top-40 -right-40" style={{ animation: "pulse-glow 6s ease-in-out infinite" }} />
+        <div className="orbital-glow w-[400px] h-[400px] bg-foreground/3 -bottom-20 -left-20" style={{ animation: "pulse-glow 8s ease-in-out 2s infinite" }} />
+        
         <Suspense fallback={null}>
           <Scene3D className="z-0" />
         </Suspense>
@@ -274,67 +305,92 @@ const Index = () => {
           className="relative z-10 text-center px-6 will-change-transform"
           style={{ y: heroY, opacity: heroOpacity, scale: heroScale }}
         >
+          {/* Top badge */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-1.5 mb-8"
+            initial={{ opacity: 0, y: 20, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ delay: 0.2, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="inline-flex items-center gap-3 rounded-full border border-border/60 glass px-5 py-2 mb-10"
           >
             <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400/75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
             </span>
-            <span className="text-xs tracking-[0.2em] text-muted-foreground uppercase font-mono">
+            <span className="text-[10px] tracking-[0.25em] text-muted-foreground uppercase font-mono">
               Available for work
             </span>
           </motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.8 }}
-            className="font-heading text-6xl font-bold tracking-tight text-foreground md:text-8xl lg:text-9xl"
-          >
-            Zaid
-            <br />
-            <span className="text-gradient">Sheliya</span>
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7, duration: 0.6 }}
-            className="mt-6 text-lg text-muted-foreground md:text-xl tracking-wide font-light font-mono"
-          >
-            <span className="text-foreground">{typedText}</span>
-            <span className="animate-pulse text-foreground/60">|</span>
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1, duration: 0.6 }}
-            className="mt-10 flex items-center justify-center gap-4"
-          >
-            <MagneticButton
-              onClick={() => document.getElementById("portfolio")?.scrollIntoView({ behavior: "smooth" })}
-              className="glass rounded-full px-8 py-3 text-sm font-medium tracking-wider text-foreground transition-all duration-300 hover:glow-md"
+          {/* Name — massive and cinematic */}
+          <div className="overflow-hidden">
+            <motion.h1
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              transition={{ delay: 0.4, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+              className="font-heading text-[clamp(3.5rem,12vw,12rem)] font-extrabold leading-[0.85] tracking-[-0.04em] text-foreground"
             >
-              View Work
-            </MagneticButton>
-            <MagneticButton
-              onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
-              className="rounded-full border border-foreground/20 px-8 py-3 text-sm font-medium tracking-wider text-muted-foreground transition-all duration-300 hover:border-foreground/50 hover:text-foreground"
+              ZAID
+            </motion.h1>
+          </div>
+          <div className="overflow-hidden mt-2">
+            <motion.h1
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              transition={{ delay: 0.55, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+              className="font-heading text-[clamp(3.5rem,12vw,12rem)] font-extrabold leading-[0.85] tracking-[-0.04em] text-gradient"
             >
-              Get in Touch
-            </MagneticButton>
-          </motion.div>
+              SHELIYA
+            </motion.h1>
+          </div>
 
+          {/* Typing role */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 1.3 }}
-            className="mt-12 flex items-center justify-center gap-6"
+            transition={{ delay: 1, duration: 0.8 }}
+            className="mt-8 flex items-center justify-center gap-3"
+          >
+            <div className="h-px w-8 bg-gradient-to-r from-transparent to-muted-foreground/50" />
+            <p className="text-sm text-muted-foreground md:text-base tracking-[0.15em] font-mono uppercase">
+              <span className="text-foreground/80">{typedText}</span>
+              <span className="animate-pulse text-foreground/40">▊</span>
+            </p>
+            <div className="h-px w-8 bg-gradient-to-l from-transparent to-muted-foreground/50" />
+          </motion.div>
+
+          {/* CTA buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.2, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-12 flex items-center justify-center gap-5"
+          >
+            <MagneticButton
+              onClick={() => document.getElementById("portfolio")?.scrollIntoView({ behavior: "smooth" })}
+              className="group relative overflow-hidden glass-strong rounded-full px-10 py-4 text-sm font-medium tracking-[0.15em] uppercase text-foreground transition-all duration-500 hover:glow-md"
+            >
+              <span className="relative z-10 flex items-center gap-2">
+                <Eye size={16} />
+                View Work
+              </span>
+            </MagneticButton>
+            <MagneticButton
+              onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
+              className="rounded-full border border-foreground/10 px-10 py-4 text-sm font-medium tracking-[0.15em] uppercase text-muted-foreground transition-all duration-500 hover:border-foreground/30 hover:text-foreground hover:glow-sm"
+            >
+              <span className="flex items-center gap-2">
+                <Sparkles size={16} />
+                Get in Touch
+              </span>
+            </MagneticButton>
+          </motion.div>
+
+          {/* Social links */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.5 }}
+            className="mt-14 flex items-center justify-center gap-5"
           >
             {[
               { Icon: Github, href: "https://github.com/sheliyazaid" },
@@ -342,24 +398,33 @@ const Index = () => {
               { Icon: Instagram, href: "https://www.instagram.com/zaxd._.shelxya/" },
               { Icon: Mail, href: "mailto:zaidsheliya16@gmail.com" },
             ].map(({ Icon, href }) => (
-              <MagneticButton key={href} onClick={() => window.open(href, "_blank")} className="text-muted-foreground/50 hover:text-foreground transition-colors duration-300">
-                <Icon size={18} />
+              <MagneticButton
+                key={href}
+                onClick={() => window.open(href, "_blank")}
+                className="group flex h-11 w-11 items-center justify-center rounded-full border border-border/40 text-muted-foreground/40 hover:text-foreground hover:border-foreground/20 hover:glow-sm transition-all duration-500"
+              >
+                <Icon size={16} className="transition-transform duration-300 group-hover:scale-110" />
               </MagneticButton>
             ))}
           </motion.div>
         </motion.div>
 
+        {/* Scroll indicator */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.5 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
+          transition={{ delay: 2 }}
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-3"
         >
-          <motion.div animate={{ y: [0, 8, 0] }} transition={{ repeat: Infinity, duration: 2 }}>
-            <ArrowDown size={20} className="text-muted-foreground" />
+          <span className="text-[9px] tracking-[0.3em] text-muted-foreground/40 uppercase font-mono">Scroll</span>
+          <motion.div animate={{ y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}>
+            <ArrowDown size={14} className="text-muted-foreground/40" />
           </motion.div>
         </motion.div>
       </section>
+
+      {/* ═══════════ MARQUEE ═══════════ */}
+      <InfiniteMarquee />
 
       {/* ═══════════════════ ABOUT ═══════════════════ */}
       <motion.section ref={aboutRef} id="about" className="gsap-section relative z-10 py-32 will-change-transform" style={{ scale: aboutScale, y: aboutY }}>
@@ -368,42 +433,60 @@ const Index = () => {
             <SectionHeading title="About" subtitle="A passionate creative who bridges the gap between design and development." />
           </div>
 
-          <div className="gsap-fade-up max-w-2xl mx-auto text-center mb-20">
+          <div className="gsap-fade-up max-w-2xl mx-auto text-center mb-24">
             <p className="text-muted-foreground leading-relaxed text-lg">
               I'm <span className="text-foreground font-medium">Zaid Sheliya</span> — a designer who codes and a developer who designs.
               I create digital experiences that are both visually stunning and technically sound.
             </p>
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-20 gsap-fade-up max-w-4xl mx-auto">
-            {stats.map((stat) => (
-              <Counter key={stat.label} {...stat} />
+          {/* Stats — dramatic */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-24 gsap-fade-up max-w-5xl mx-auto">
+            {stats.map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                className="relative group"
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-foreground/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="relative p-6">
+                  <Counter {...stat} />
+                </div>
+              </motion.div>
             ))}
           </div>
 
-          <div className="gsap-line mx-auto h-px w-full max-w-4xl bg-border mb-16 origin-left" />
+          <div className="section-divider mx-auto w-full max-w-5xl mb-20" />
 
-          {/* Highlights */}
-          <div className="grid grid-cols-3 md:grid-cols-6 gap-4 mb-20 gsap-fade-up">
+          {/* Highlights — glass pills */}
+          <div className="flex flex-wrap justify-center gap-4 mb-24 gsap-fade-up">
             {highlights.map((item, i) => (
-              <TiltCard key={item.label} delay={i * 0.05}>
-                <div className="flex flex-col items-center gap-3 text-center py-4">
-                  <motion.div whileHover={{ rotate: 360 }} transition={{ duration: 0.6 }}>
-                    <item.icon size={22} className="text-foreground/60" />
-                  </motion.div>
-                  <span className="text-[10px] text-muted-foreground tracking-[0.15em] uppercase font-mono">{item.label}</span>
-                </div>
-              </TiltCard>
+              <motion.div
+                key={item.label}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false }}
+                transition={{ delay: i * 0.08 }}
+                whileHover={{ scale: 1.08, y: -4 }}
+                className="glass-strong gradient-border rounded-2xl px-6 py-4 flex items-center gap-3 group"
+              >
+                <motion.div whileHover={{ rotate: 360 }} transition={{ duration: 0.6 }}>
+                  <item.icon size={18} className="text-muted-foreground group-hover:text-foreground transition-colors duration-300" />
+                </motion.div>
+                <span className="text-xs text-muted-foreground tracking-[0.12em] uppercase font-mono group-hover:text-foreground transition-colors duration-300">{item.label}</span>
+              </motion.div>
             ))}
           </div>
 
           {/* Skills */}
-          <div className="grid gap-12 md:grid-cols-2 max-w-4xl mx-auto gsap-fade-up">
+          <div className="grid gap-8 md:grid-cols-2 max-w-4xl mx-auto gsap-fade-up">
             <TiltCard delay={0.1} glare>
               <div className="space-y-5">
-                <div className="flex items-center gap-3 mb-4">
-                  <Palette size={18} className="text-foreground/60" />
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/50 glass">
+                    <Palette size={18} className="text-foreground/60" />
+                  </div>
                   <h3 className="font-heading text-lg font-semibold text-foreground">Design</h3>
                 </div>
                 {designSkills.map((skill, i) => (
@@ -414,8 +497,10 @@ const Index = () => {
 
             <TiltCard delay={0.2} glare>
               <div className="space-y-5">
-                <div className="flex items-center gap-3 mb-4">
-                  <Terminal size={18} className="text-foreground/60" />
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/50 glass">
+                    <Terminal size={18} className="text-foreground/60" />
+                  </div>
                   <h3 className="font-heading text-lg font-semibold text-foreground">Development</h3>
                 </div>
                 {devSkills.map((skill, i) => (
@@ -434,17 +519,18 @@ const Index = () => {
             <SectionHeading title="Selected Work" subtitle="Projects that showcase design and development expertise." />
           </div>
 
-          <div className="gsap-line mx-auto h-px w-full max-w-6xl bg-border mb-12 origin-right" />
+          <div className="section-divider mx-auto w-full max-w-6xl mb-14" />
 
-          <div className="flex justify-center gap-4 mb-12 gsap-fade-up">
+          {/* Filters */}
+          <div className="flex justify-center gap-3 mb-14 gsap-fade-up">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setActiveFilter(cat)}
-                className={`rounded-full px-6 py-2 text-xs tracking-[0.15em] uppercase font-mono transition-all duration-300 ${
+                className={`rounded-full px-7 py-2.5 text-[10px] tracking-[0.2em] uppercase font-mono transition-all duration-500 ${
                   activeFilter === cat
-                    ? "glass text-foreground glow-sm"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "glass-strong text-foreground glow-sm gradient-border"
+                    : "text-muted-foreground/60 hover:text-foreground border border-transparent hover:border-border/30"
                 }`}
               >
                 {cat}
@@ -452,7 +538,8 @@ const Index = () => {
             ))}
           </div>
 
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-w-6xl mx-auto gsap-fade-up">
+          {/* Project grid */}
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-w-7xl mx-auto gsap-fade-up">
             <AnimatePresence mode="popLayout">
               {filtered.map((project, i) => (
                 <motion.div
@@ -463,38 +550,40 @@ const Index = () => {
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.4, delay: i * 0.05 }}
                 >
-                  <TiltCard className="h-full">
-                    <div className="group flex flex-col min-h-[280px]">
-                      {/* Project Image */}
-                      <div className="relative overflow-hidden rounded-lg mb-4 -mt-2 -mx-2">
-                        <motion.img
-                          src={project.image}
-                          alt={project.title}
-                          className="w-full h-40 object-cover rounded-lg"
-                          whileHover={{ scale: 1.08 }}
-                          transition={{ duration: 0.5 }}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-3">
-                          <span className="flex items-center gap-1 text-xs font-mono text-foreground tracking-wider">
-                            <ExternalLink size={12} /> View Project
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex-1 flex flex-col justify-between">
-                        <div>
-                          <span className="text-[10px] tracking-[0.2em] text-muted-foreground uppercase font-mono">
-                            {project.category}
-                          </span>
-                          <h3 className="font-heading text-lg font-semibold text-foreground mt-1">
-                            {project.title}
-                          </h3>
-                          <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                            {project.description}
-                          </p>
-                        </div>
+                  <motion.div
+                    whileHover={{ y: -8 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    className="group glass-strong gradient-border rounded-2xl overflow-hidden h-full"
+                  >
+                    {/* Image */}
+                    <div className="relative overflow-hidden">
+                      <motion.img
+                        src={project.image}
+                        alt={project.title}
+                        className="w-full h-48 object-cover"
+                        whileHover={{ scale: 1.1 }}
+                        transition={{ duration: 0.6 }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
+                        <span className="flex items-center gap-2 text-xs font-mono text-foreground tracking-[0.15em] uppercase glass-strong rounded-full px-5 py-2">
+                          <ExternalLink size={12} /> View
+                        </span>
                       </div>
                     </div>
-                  </TiltCard>
+                    {/* Content */}
+                    <div className="p-5">
+                      <span className="text-[9px] tracking-[0.25em] text-muted-foreground/60 uppercase font-mono">
+                        {project.category}
+                      </span>
+                      <h3 className="font-heading text-base font-semibold text-foreground mt-2 group-hover:text-gradient transition-all duration-300">
+                        {project.title}
+                      </h3>
+                      <p className="mt-2 text-xs text-muted-foreground/70 leading-relaxed">
+                        {project.description}
+                      </p>
+                    </div>
+                  </motion.div>
                 </motion.div>
               ))}
             </AnimatePresence>
@@ -509,87 +598,94 @@ const Index = () => {
             <SectionHeading title="Services" subtitle="What I bring to your next project." />
           </div>
 
-          <div className="gsap-line mx-auto h-px w-full max-w-4xl bg-border mb-16 origin-left" />
+          <div className="section-divider mx-auto w-full max-w-4xl mb-20" />
 
-          <div className="grid gap-8 sm:grid-cols-2 max-w-4xl mx-auto gsap-fade-up">
+          <div className="grid gap-6 sm:grid-cols-2 max-w-4xl mx-auto gsap-fade-up">
             {services.map((service, i) => (
-              <TiltCard key={service.title} delay={i * 0.1} className="text-center">
-                <div className="py-4">
+              <motion.div
+                key={service.title}
+                whileHover={{ y: -6, scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                className="group relative glass-strong gradient-border rounded-2xl p-8 overflow-hidden"
+              >
+                {/* Ambient gradient */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${service.accent} opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-2xl`} />
+                
+                <div className="relative z-10">
                   <motion.div
-                    className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-xl border border-border"
+                    className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border border-border/50 glass"
                     whileHover={{ rotate: 10, scale: 1.1 }}
                     transition={{ type: "spring", stiffness: 300 }}
                   >
-                    <service.icon size={24} className="text-foreground/60" />
+                    <service.icon size={22} className="text-foreground/60 group-hover:text-foreground transition-colors duration-300" />
                   </motion.div>
                   <h3 className="font-heading text-lg font-semibold text-foreground mb-3">
                     {service.title}
                   </h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
+                  <p className="text-sm text-muted-foreground/70 leading-relaxed">
                     {service.description}
                   </p>
                 </div>
-              </TiltCard>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ═══════════════════ CONTACT (STATIC) ═══════════════════ */}
+      {/* ═══════════════════ CONTACT ═══════════════════ */}
       <section id="contact" className="gsap-section relative z-10 py-32">
         <div className="container mx-auto px-6">
           <div className="gsap-fade-up">
             <SectionHeading title="Let's Talk" subtitle="Have a project in mind? Let's make it happen." />
           </div>
 
-          <div className="gsap-line mx-auto h-px w-full max-w-lg bg-border mb-12 origin-center" />
+          <div className="section-divider mx-auto w-full max-w-lg mb-14" />
 
           <div className="max-w-lg mx-auto gsap-fade-up">
-            {/* Static glass card — no tilt */}
-            <div className="glass rounded-xl p-8">
-              <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="glass-strong gradient-border rounded-2xl p-10 relative overflow-hidden noise">
+              <form onSubmit={handleSubmit} className="space-y-7 relative z-10">
                 <div className="space-y-2">
-                  <label className="text-[10px] tracking-[0.2em] text-muted-foreground uppercase font-mono">Name</label>
+                  <label className="text-[10px] tracking-[0.25em] text-muted-foreground/70 uppercase font-mono">Name</label>
                   <input
                     required
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="w-full rounded-lg border border-border bg-secondary/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-1 focus:ring-foreground/20 transition-all font-mono"
+                    className="w-full rounded-xl border border-border/40 bg-secondary/30 px-5 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-foreground/20 focus:glow-sm transition-all font-mono"
                     placeholder="your name"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] tracking-[0.2em] text-muted-foreground uppercase font-mono">Phone</label>
+                  <label className="text-[10px] tracking-[0.25em] text-muted-foreground/70 uppercase font-mono">Phone</label>
                   <input
                     required
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    className="w-full rounded-lg border border-border bg-secondary/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-1 focus:ring-foreground/20 transition-all font-mono"
+                    className="w-full rounded-xl border border-border/40 bg-secondary/30 px-5 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-foreground/20 focus:glow-sm transition-all font-mono"
                     placeholder="your phone"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] tracking-[0.2em] text-muted-foreground uppercase font-mono">Message</label>
+                  <label className="text-[10px] tracking-[0.25em] text-muted-foreground/70 uppercase font-mono">Message</label>
                   <textarea
                     required
                     rows={4}
                     value={form.message}
                     onChange={(e) => setForm({ ...form, message: e.target.value })}
-                    className="w-full rounded-lg border border-border bg-secondary/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-1 focus:ring-foreground/20 transition-all resize-none font-mono"
+                    className="w-full rounded-xl border border-border/40 bg-secondary/30 px-5 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-foreground/20 focus:glow-sm transition-all resize-none font-mono"
                     placeholder="tell me about your project..."
                   />
                 </div>
                 <MagneticButton
                   type="submit"
-                  className="w-full glass rounded-lg py-3 text-sm font-medium tracking-wider text-foreground flex items-center justify-center gap-2 hover:glow-md transition-shadow duration-300"
+                  className="w-full glass-strong gradient-border rounded-xl py-4 text-sm font-medium tracking-[0.15em] uppercase text-foreground flex items-center justify-center gap-3 hover:glow-md transition-all duration-500"
                 >
-                  <Send size={16} />
+                  <Send size={14} />
                   Send via WhatsApp
                 </MagneticButton>
               </form>
-              <div className="mt-6 flex items-center justify-center gap-2 text-muted-foreground">
-                <MessageCircle size={14} />
-                <span className="text-[10px] tracking-[0.15em] font-mono uppercase">Opens WhatsApp directly</span>
+              <div className="mt-6 flex items-center justify-center gap-2 text-muted-foreground/40 relative z-10">
+                <MessageCircle size={12} />
+                <span className="text-[9px] tracking-[0.2em] font-mono uppercase">Opens WhatsApp directly</span>
               </div>
             </div>
           </div>
@@ -597,28 +693,27 @@ const Index = () => {
       </section>
 
       {/* ═══════════════════ FOOTER ═══════════════════ */}
-      <footer className="relative z-10 border-t border-border">
+      <footer className="relative z-10 border-t border-border/40">
         <div className="container mx-auto px-6">
-          {/* Top */}
-          <div className="grid md:grid-cols-3 gap-12 py-16">
+          <div className="grid md:grid-cols-3 gap-12 py-20">
             {/* Brand */}
             <div>
-              <p className="font-heading text-2xl font-bold tracking-wider text-foreground mb-4">
-                ZS<span className="text-muted-foreground">.</span>
+              <p className="font-heading text-3xl font-bold tracking-wider text-foreground mb-4">
+                ZS<span className="text-gradient-gold">.</span>
               </p>
-              <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
+              <p className="text-sm text-muted-foreground/60 leading-relaxed max-w-xs">
                 A creative developer crafting digital experiences that blend stunning design with clean, performant code.
               </p>
             </div>
             {/* Quick Links */}
             <div>
-              <h4 className="text-xs tracking-[0.2em] text-foreground uppercase font-mono mb-6">Quick Links</h4>
-              <div className="space-y-3">
+              <h4 className="text-[10px] tracking-[0.25em] text-foreground/80 uppercase font-mono mb-8">Quick Links</h4>
+              <div className="space-y-4">
                 {["hero", "about", "portfolio", "services", "contact"].map((id) => (
                   <button
                     key={id}
                     onClick={() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" })}
-                    className="block text-sm text-muted-foreground hover:text-foreground transition-colors capitalize"
+                    className="block text-sm text-muted-foreground/50 hover:text-foreground transition-colors duration-300 capitalize tracking-wide"
                   >
                     {id === "hero" ? "Home" : id}
                   </button>
@@ -627,8 +722,8 @@ const Index = () => {
             </div>
             {/* Connect */}
             <div>
-              <h4 className="text-xs tracking-[0.2em] text-foreground uppercase font-mono mb-6">Connect</h4>
-              <div className="flex gap-4 mb-6">
+              <h4 className="text-[10px] tracking-[0.25em] text-foreground/80 uppercase font-mono mb-8">Connect</h4>
+              <div className="flex gap-3 mb-6">
                 {[
                   { Icon: Github, label: "GitHub", href: "https://github.com/sheliyazaid" },
                   { Icon: Linkedin, label: "LinkedIn", href: "https://www.linkedin.com/in/zaid-sheliya/" },
@@ -638,24 +733,25 @@ const Index = () => {
                   <MagneticButton
                     key={label}
                     onClick={() => window.open(href, "_blank")}
-                    className="flex h-10 w-10 items-center justify-center rounded-lg border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all"
+                    className="flex h-11 w-11 items-center justify-center rounded-xl border border-border/30 text-muted-foreground/40 hover:text-foreground hover:border-foreground/20 hover:glow-sm transition-all duration-500"
                   >
-                    <Icon size={16} />
+                    <Icon size={15} />
                   </MagneticButton>
                 ))}
               </div>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-xs text-muted-foreground/40 font-mono tracking-wide">
                 zaidsheliya16@gmail.com
               </p>
             </div>
           </div>
           {/* Bottom */}
-          <div className="border-t border-border py-6 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-xs text-muted-foreground tracking-wider font-mono">
+          <div className="section-divider" />
+          <div className="py-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-[10px] text-muted-foreground/40 tracking-[0.15em] font-mono">
               © {new Date().getFullYear()} Zaid Sheliya. All rights reserved.
             </p>
-            <p className="text-xs text-muted-foreground tracking-wider font-mono flex items-center gap-1">
-              Designed & Built with <Heart size={12} className="text-foreground/40" /> in India
+            <p className="text-[10px] text-muted-foreground/40 tracking-[0.15em] font-mono flex items-center gap-1.5">
+              Designed & Built with <Heart size={10} className="text-foreground/30" /> in India
             </p>
           </div>
         </div>
@@ -669,9 +765,9 @@ const Index = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="fixed bottom-8 right-8 z-50 glass rounded-full p-3 text-foreground hover:glow-md transition-shadow"
+            className="fixed bottom-8 right-8 z-50 glass-strong gradient-border rounded-full p-3.5 text-foreground/60 hover:text-foreground hover:glow-md transition-all duration-500"
           >
-            <ArrowUp size={18} />
+            <ArrowUp size={16} />
           </motion.button>
         )}
       </AnimatePresence>
