@@ -632,6 +632,134 @@ const Index = () => {
         </div>
       </section>
 
+      {/* ═══════════════════ TESTIMONIALS ═══════════════════ */}
+      <section id="testimonials" className="gsap-section relative z-10 py-32 overflow-hidden">
+        <div className="container mx-auto px-6">
+          <div className="gsap-fade-up">
+            <SectionHeading title="Wall of Love" subtitle="What clients & collaborators say about working with me." />
+          </div>
+
+          <div className="section-divider mx-auto w-full max-w-5xl mb-16" />
+
+          {/* Bento-style testimonial grid */}
+          <div className="grid gap-4 md:grid-cols-3 max-w-6xl mx-auto gsap-fade-up auto-rows-auto">
+            {[
+              {
+                name: "Arjun Patel",
+                role: "CEO, TechVibe Studios",
+                quote: "Zaid turned our vague idea into a brand that people actually recognize. His design sense is on another level — every pixel feels intentional.",
+                rating: 5,
+                featured: true,
+                accent: "from-purple-500/10 to-blue-500/10",
+              },
+              {
+                name: "Sneha Kapoor",
+                role: "Founder, Luxe & Co",
+                quote: "The attention to detail is insane. Delivered ahead of schedule with quality that exceeded expectations.",
+                rating: 5,
+                featured: false,
+                accent: "from-amber-500/10 to-orange-500/10",
+              },
+              {
+                name: "Rahul Sharma",
+                role: "CTO, DevStack",
+                quote: "Clean code, modern UI, and he actually understands both design AND development. Rare combo.",
+                rating: 5,
+                featured: false,
+                accent: "from-cyan-500/10 to-teal-500/10",
+              },
+              {
+                name: "Priya Mehta",
+                role: "Marketing Head, Bloom Agency",
+                quote: "Our conversion rate jumped 40% after Zaid redesigned our landing page. The ROI speaks for itself.",
+                rating: 5,
+                featured: true,
+                accent: "from-emerald-500/10 to-green-500/10",
+              },
+              {
+                name: "Vikram Desai",
+                role: "Indie Filmmaker",
+                quote: "He made my portfolio feel like a cinematic experience. People think I hired a whole agency.",
+                rating: 5,
+                featured: false,
+                accent: "from-rose-500/10 to-pink-500/10",
+              },
+              {
+                name: "Ananya Iyer",
+                role: "Product Designer, Nexus",
+                quote: "Zaid's work ethic is unmatched. Fast communication, creative solutions, and zero drama. 10/10 would hire again.",
+                rating: 5,
+                featured: false,
+                accent: "from-violet-500/10 to-indigo-500/10",
+              },
+            ].map((t, i) => (
+              <motion.div
+                key={t.name}
+                initial={{ opacity: 0, y: 40, rotateX: 15 }}
+                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+                viewport={{ once: false, amount: 0.2 }}
+                transition={{ delay: i * 0.08, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                whileHover={{ y: -6, scale: 1.02 }}
+                className={`group relative glass-strong gradient-border rounded-2xl p-7 overflow-hidden ${
+                  t.featured ? "md:row-span-2 flex flex-col justify-between" : ""
+                }`}
+                style={{ perspective: "800px" }}
+              >
+                {/* Hover gradient */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${t.accent} opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-2xl`} />
+
+                <div className="relative z-10">
+                  {/* Quote icon */}
+                  <div className="text-foreground/[0.06] font-heading text-7xl leading-none mb-1 select-none">"</div>
+
+                  <p className={`text-foreground/80 leading-relaxed ${t.featured ? "text-base md:text-lg" : "text-sm"}`}>
+                    {t.quote}
+                  </p>
+
+                  {/* Stars */}
+                  <div className="flex gap-1 mt-5 mb-4">
+                    {Array.from({ length: t.rating }).map((_, si) => (
+                      <motion.span
+                        key={si}
+                        initial={{ opacity: 0, scale: 0 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: false }}
+                        transition={{ delay: i * 0.08 + si * 0.05 + 0.3 }}
+                        className="text-foreground/40 text-xs"
+                      >
+                        ★
+                      </motion.span>
+                    ))}
+                  </div>
+
+                  {/* Author */}
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full border border-border/40 glass text-foreground/50 font-heading text-xs font-bold">
+                      {t.name.split(" ").map(n => n[0]).join("")}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-foreground">{t.name}</p>
+                      <p className="text-[10px] text-muted-foreground/50 font-mono tracking-wide">{t.role}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Corner badge for featured */}
+                {t.featured && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    className="absolute top-4 right-4 text-[8px] tracking-[0.2em] uppercase font-mono text-muted-foreground/30 border border-border/30 rounded-full px-3 py-1"
+                  >
+                    Featured
+                  </motion.div>
+                )}
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ═══════════════════ CONTACT ═══════════════════ */}
       <section id="contact" className="gsap-section relative z-10 py-32">
         <div className="container mx-auto px-6">
