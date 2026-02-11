@@ -1,5 +1,5 @@
 import { Suspense, lazy, useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
 import { ArrowDown, ExternalLink, Send, MessageCircle, Palette, Code, PenTool, Globe, Layout, Figma, Smartphone, Terminal, Github, Linkedin, Mail, Heart, ArrowUp, Instagram, Sparkles, Eye, Star } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -9,7 +9,6 @@ import MagneticButton from "../components/MagneticButton";
 import ScrollProgress from "../components/ScrollProgress";
 import CursorFollower from "../components/CursorFollower";
 
-// Project images
 import imgBrand from "@/assets/project-brand.jpg";
 import imgSocial from "@/assets/project-social.jpg";
 import imgEditorial from "@/assets/project-editorial.jpg";
@@ -88,6 +87,27 @@ const testimonials = [
 
 const categories = ["All", "Graphic Design", "Frontend"];
 
+// ─── 3D MOUSE TRACKING HOOK ────────────────────
+function use3DMouse() {
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const smoothX = useSpring(mouseX, { stiffness: 50, damping: 20 });
+  const smoothY = useSpring(mouseY, { stiffness: 50, damping: 20 });
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 2;
+      const y = (e.clientY / window.innerHeight - 0.5) * 2;
+      mouseX.set(x);
+      mouseY.set(y);
+    };
+    window.addEventListener("mousemove", handler, { passive: true });
+    return () => window.removeEventListener("mousemove", handler);
+  }, [mouseX, mouseY]);
+
+  return { smoothX, smoothY };
+}
+
 // ─── SKILL BAR ────────────────────────────────────
 function SkillBar({ name, level, delay }: { name: string; level: number; delay: number }) {
   return (
@@ -157,6 +177,26 @@ function InfiniteMarquee() {
   );
 }
 
+// ─── SPOTLIGHT CARD WRAPPER ────────────────────
+function SpotlightCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  const handleMouse = (e: React.MouseEvent) => {
+    if (!ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    ref.current.style.setProperty("--mouse-x", `${x}%`);
+    ref.current.style.setProperty("--mouse-y", `${y}%`);
+  };
+
+  return (
+    <div ref={ref} onMouseMove={handleMouse} className={`spotlight-card ${className}`}>
+      {children}
+    </div>
+  );
+}
+
 // ─── MAIN PAGE ────────────────────────────────────
 const Index = () => {
   const mainRef = useRef<HTMLDivElement>(null);
@@ -165,6 +205,7 @@ const Index = () => {
   const [activeFilter, setActiveFilter] = useState("All");
   const [form, setForm] = useState({ name: "", phone: "", message: "" });
   const [showTop, setShowTop] = useState(false);
+  const { smoothX, smoothY } = use3DMouse();
   
   // Typing animation
   const roles = ["Graphic Designer", "Frontend Developer", "UI/UX Designer", "Creative Thinker", "Brand Strategist"];
@@ -206,6 +247,10 @@ const Index = () => {
   const heroScale = useTransform(scrollY, [0, 800], [1, 0.75]);
   const aboutScale = useTransform(scrollY, [200, 900], [0.9, 1]);
   const aboutY = useTransform(scrollY, [200, 900], [150, 0]);
+
+  // 3D rotations driven by mouse
+  const rotateX = useTransform(smoothY, [-1, 1], [3, -3]);
+  const rotateY = useTransform(smoothX, [-1, 1], [-3, 3]);
 
   useEffect(() => {
     const onScroll = () => setShowTop(window.scrollY > 600);
@@ -269,21 +314,16 @@ const Index = () => {
         <ParticleBackground />
       </Suspense>
 
-      {/* ══════════════════════════════════════════════════════════
-          ██╗  ██╗███████╗██████╗  ██████╗ 
-          ██║  ██║██╔════╝██╔══██╗██╔═══██╗
-          ███████║█████╗  ██████╔╝██║   ██║
-          ██╔══██║██╔══╝  ██╔══██╗██║   ██║
-          ██║  ██║███████╗██║  ██║╚██████╔╝
-          ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝ ╚═════╝ 
-         ══════════════════════════════════════════════════════════ */}
+      {/* ══════════════════ HERO ══════════════════ */}
       <section ref={heroRef} id="hero" className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden">
+        {/* Aurora ambient */}
+        <div className="aurora-glow" />
+        
         {/* Ambient glow orbs */}
         <div className="orbital-glow w-[600px] h-[600px] bg-foreground/5 -top-48 -right-48" style={{ animation: "pulse-glow 6s ease-in-out infinite" }} />
         <div className="orbital-glow w-[500px] h-[500px] bg-foreground/3 -bottom-32 -left-32" style={{ animation: "pulse-glow 8s ease-in-out 2s infinite" }} />
         <div className="lens-flare top-1/4 right-1/4" />
         
-        {/* 3D Scene */}
         <Suspense fallback={null}>
           <Scene3D className="z-0" />
         </Suspense>
@@ -322,130 +362,132 @@ const Index = () => {
           <div className="w-px h-16 bg-gradient-to-b from-transparent via-foreground/10 to-transparent" />
         </motion.div>
 
-        {/* Main hero content */}
+        {/* Main hero — with 3D mouse tilt */}
         <motion.div
           id="hero-content"
-          className="relative z-10 text-center px-6 will-change-transform max-w-6xl mx-auto"
+          className="relative z-10 text-center px-6 will-change-transform max-w-6xl mx-auto perspective-section"
           style={{ y: heroY, opacity: heroOpacity, scale: heroScale }}
         >
-          {/* Available badge */}
-          <motion.div
-            initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ delay: 0.3, duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            className="inline-flex items-center gap-3 rounded-full border border-border/40 glass px-5 py-2 mb-12"
-          >
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400/75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-            </span>
-            <span className="text-[9px] tracking-[0.3em] text-muted-foreground/60 uppercase font-mono">
-              Available for Freelance
-            </span>
-          </motion.div>
+          <motion.div style={{ rotateX, rotateY }} className="depth-layer">
+            {/* Available badge */}
+            <motion.div
+              initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{ delay: 0.3, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+              className="inline-flex items-center gap-3 rounded-full border border-border/40 glass-holo px-5 py-2 mb-12"
+            >
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400/75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+              </span>
+              <span className="text-[9px] tracking-[0.3em] text-muted-foreground/60 uppercase font-mono">
+                Available for Freelance
+              </span>
+            </motion.div>
 
-          {/* Name — the centerpiece */}
-          <div className="relative">
-            {/* Ghost text behind */}
+            {/* Name — the centerpiece with glitch */}
+            <div className="relative">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8, duration: 1.5 }}
+                className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none"
+              >
+                <span className="font-heading text-[clamp(5rem,18vw,16rem)] font-extrabold leading-[0.8] text-stroke tracking-[-0.05em]">ZS</span>
+              </motion.div>
+
+              <div className="overflow-hidden relative">
+                <motion.h1
+                  initial={{ y: "120%" }}
+                  animate={{ y: 0 }}
+                  transition={{ delay: 0.5, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                  className="font-heading text-[clamp(3rem,10vw,10rem)] font-extrabold leading-[0.85] tracking-[-0.04em] text-foreground glitch-text"
+                  data-text="ZAID"
+                >
+                  ZAID
+                </motion.h1>
+              </div>
+              <div className="overflow-hidden mt-1">
+                <motion.h1
+                  initial={{ y: "120%" }}
+                  animate={{ y: 0 }}
+                  transition={{ delay: 0.65, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                  className="font-heading text-[clamp(3rem,10vw,10rem)] font-extrabold leading-[0.85] tracking-[-0.04em] text-gradient glitch-text"
+                  data-text="SHELIYA"
+                >
+                  SHELIYA
+                </motion.h1>
+              </div>
+            </div>
+
+            {/* Typing role */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.2, duration: 0.8 }}
+              className="mt-10 flex items-center justify-center gap-4"
+            >
+              <div className="h-px w-12 bg-gradient-to-r from-transparent to-muted-foreground/30" />
+              <p className="text-sm text-muted-foreground md:text-base tracking-[0.2em] font-mono uppercase">
+                <span className="text-foreground/70">{typedText}</span>
+                <span className="animate-pulse text-foreground/30 ml-0.5">▊</span>
+              </p>
+              <div className="h-px w-12 bg-gradient-to-l from-transparent to-muted-foreground/30" />
+            </motion.div>
+
+            {/* CTA buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.5, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              className="mt-14 flex items-center justify-center gap-5 flex-wrap"
+            >
+              <MagneticButton
+                onClick={() => document.getElementById("portfolio")?.scrollIntoView({ behavior: "smooth" })}
+                className="group relative overflow-hidden glass-holo animated-gradient-border rounded-full px-12 py-4 text-sm font-medium tracking-[0.15em] uppercase text-foreground transition-all duration-500 hover:glow-md"
+              >
+                <span className="relative z-10 flex items-center gap-2.5">
+                  <Eye size={15} />
+                  View Work
+                </span>
+              </MagneticButton>
+              <MagneticButton
+                onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
+                className="rounded-full border border-foreground/8 px-12 py-4 text-sm font-medium tracking-[0.15em] uppercase text-muted-foreground/70 transition-all duration-500 hover:border-foreground/20 hover:text-foreground hover:glow-sm"
+              >
+                <span className="flex items-center gap-2.5">
+                  <Sparkles size={15} />
+                  Let's Talk
+                </span>
+              </MagneticButton>
+            </motion.div>
+
+            {/* Mobile social links */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.8, duration: 1.5 }}
-              className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none"
+              transition={{ delay: 1.8 }}
+              className="mt-12 flex items-center justify-center gap-5 lg:hidden"
             >
-              <span className="font-heading text-[clamp(5rem,18vw,16rem)] font-extrabold leading-[0.8] text-stroke tracking-[-0.05em]">ZS</span>
+              {[
+                { Icon: Github, href: "https://github.com/sheliyazaid" },
+                { Icon: Linkedin, href: "https://www.linkedin.com/in/zaid-sheliya/" },
+                { Icon: Instagram, href: "https://www.instagram.com/zaxd._.shelxya/" },
+                { Icon: Mail, href: "mailto:zaidsheliya16@gmail.com" },
+              ].map(({ Icon, href }) => (
+                <MagneticButton
+                  key={href}
+                  onClick={() => window.open(href, "_blank")}
+                  className="text-muted-foreground/30 hover:text-foreground transition-all duration-500"
+                >
+                  <Icon size={16} />
+                </MagneticButton>
+              ))}
             </motion.div>
-
-            {/* Main name */}
-            <div className="overflow-hidden relative">
-              <motion.h1
-                initial={{ y: "120%" }}
-                animate={{ y: 0 }}
-                transition={{ delay: 0.5, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                className="font-heading text-[clamp(3rem,10vw,10rem)] font-extrabold leading-[0.85] tracking-[-0.04em] text-foreground"
-              >
-                ZAID
-              </motion.h1>
-            </div>
-            <div className="overflow-hidden mt-1">
-              <motion.h1
-                initial={{ y: "120%" }}
-                animate={{ y: 0 }}
-                transition={{ delay: 0.65, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                className="font-heading text-[clamp(3rem,10vw,10rem)] font-extrabold leading-[0.85] tracking-[-0.04em] text-gradient"
-              >
-                SHELIYA
-              </motion.h1>
-            </div>
-          </div>
-
-          {/* Typing role */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.2, duration: 0.8 }}
-            className="mt-10 flex items-center justify-center gap-4"
-          >
-            <div className="h-px w-12 bg-gradient-to-r from-transparent to-muted-foreground/30" />
-            <p className="text-sm text-muted-foreground md:text-base tracking-[0.2em] font-mono uppercase">
-              <span className="text-foreground/70">{typedText}</span>
-              <span className="animate-pulse text-foreground/30 ml-0.5">▊</span>
-            </p>
-            <div className="h-px w-12 bg-gradient-to-l from-transparent to-muted-foreground/30" />
-          </motion.div>
-
-          {/* CTA buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.5, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="mt-14 flex items-center justify-center gap-5 flex-wrap"
-          >
-            <MagneticButton
-              onClick={() => document.getElementById("portfolio")?.scrollIntoView({ behavior: "smooth" })}
-              className="group relative overflow-hidden glass-strong animated-gradient-border rounded-full px-12 py-4 text-sm font-medium tracking-[0.15em] uppercase text-foreground transition-all duration-500 hover:glow-md"
-            >
-              <span className="relative z-10 flex items-center gap-2.5">
-                <Eye size={15} />
-                View Work
-              </span>
-            </MagneticButton>
-            <MagneticButton
-              onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
-              className="rounded-full border border-foreground/8 px-12 py-4 text-sm font-medium tracking-[0.15em] uppercase text-muted-foreground/70 transition-all duration-500 hover:border-foreground/20 hover:text-foreground hover:glow-sm"
-            >
-              <span className="flex items-center gap-2.5">
-                <Sparkles size={15} />
-                Let's Talk
-              </span>
-            </MagneticButton>
-          </motion.div>
-
-          {/* Mobile social links */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.8 }}
-            className="mt-12 flex items-center justify-center gap-5 lg:hidden"
-          >
-            {[
-              { Icon: Github, href: "https://github.com/sheliyazaid" },
-              { Icon: Linkedin, href: "https://www.linkedin.com/in/zaid-sheliya/" },
-              { Icon: Instagram, href: "https://www.instagram.com/zaxd._.shelxya/" },
-              { Icon: Mail, href: "mailto:zaidsheliya16@gmail.com" },
-            ].map(({ Icon, href }) => (
-              <MagneticButton
-                key={href}
-                onClick={() => window.open(href, "_blank")}
-                className="text-muted-foreground/30 hover:text-foreground transition-all duration-500"
-              >
-                <Icon size={16} />
-              </MagneticButton>
-            ))}
           </motion.div>
         </motion.div>
 
-        {/* Bottom scroll indicator with stats teaser */}
+        {/* Bottom scroll indicator */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -453,7 +495,6 @@ const Index = () => {
           className="absolute bottom-8 left-0 right-0 z-10 px-6"
         >
           <div className="max-w-4xl mx-auto flex items-end justify-between">
-            {/* Mini stats */}
             <div className="hidden md:flex items-center gap-8">
               {stats.slice(0, 2).map((s) => (
                 <div key={s.label} className="text-left">
@@ -463,7 +504,6 @@ const Index = () => {
               ))}
             </div>
 
-            {/* Scroll */}
             <div className="flex flex-col items-center gap-2 mx-auto md:mx-0">
               <span className="text-[8px] tracking-[0.35em] text-muted-foreground/25 uppercase font-mono">Scroll down</span>
               <motion.div animate={{ y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}>
@@ -471,7 +511,6 @@ const Index = () => {
               </motion.div>
             </div>
 
-            {/* Mini stats right */}
             <div className="hidden md:flex items-center gap-8">
               {stats.slice(2).map((s) => (
                 <div key={s.label} className="text-right">
@@ -489,7 +528,10 @@ const Index = () => {
 
       {/* ═══════════════════ ABOUT ═══════════════════ */}
       <motion.section ref={aboutRef} id="about" className="gsap-section relative z-10 py-32 will-change-transform" style={{ scale: aboutScale, y: aboutY }}>
-        <div id="about-inner" className="container mx-auto px-6">
+        {/* Section aurora */}
+        <div className="aurora-glow" />
+        
+        <div id="about-inner" className="container mx-auto px-6 relative z-10">
           <div className="gsap-fade-up">
             <SectionHeading title="About" subtitle="A passionate creative who bridges the gap between design and development." />
           </div>
@@ -501,17 +543,22 @@ const Index = () => {
             </p>
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-24 gsap-fade-up max-w-5xl mx-auto">
-            {stats.map((stat) => (
-              <motion.div
-                key={stat.label}
-                className="relative group glass-strong gradient-border rounded-2xl p-8"
-                whileHover={{ scale: 1.05, y: -4 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <Counter {...stat} />
-              </motion.div>
+          {/* Stats — with 3D perspective */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-24 gsap-fade-up max-w-5xl mx-auto perspective-section">
+            {stats.map((stat, i) => (
+              <SpotlightCard key={stat.label} className="rounded-2xl">
+                <motion.div
+                  className="relative glass-holo gradient-border rounded-2xl p-8 card-3d scan-line"
+                  whileHover={{ scale: 1.05, y: -8, rotateX: -3, rotateY: 3 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                  initial={{ opacity: 0, y: 40, rotateX: 10 }}
+                  whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+                  viewport={{ once: false }}
+                  custom={i}
+                >
+                  <Counter {...stat} />
+                </motion.div>
+              </SpotlightCard>
             ))}
           </div>
 
@@ -522,12 +569,12 @@ const Index = () => {
             {highlights.map((item, i) => (
               <motion.div
                 key={item.label}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 20, scale: 0.8 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 viewport={{ once: false }}
-                transition={{ delay: i * 0.06 }}
-                whileHover={{ scale: 1.08, y: -4 }}
-                className="glass-strong gradient-border rounded-full px-5 py-3 flex items-center gap-2.5 group"
+                transition={{ delay: i * 0.06, type: "spring", stiffness: 200 }}
+                whileHover={{ scale: 1.12, y: -6, rotateZ: Math.random() > 0.5 ? 2 : -2 }}
+                className="glass-holo gradient-border rounded-full px-5 py-3 flex items-center gap-2.5 group"
               >
                 <item.icon size={14} className="text-muted-foreground/50 group-hover:text-foreground transition-colors duration-300" />
                 <span className="text-[10px] text-muted-foreground/60 tracking-[0.12em] uppercase font-mono group-hover:text-foreground transition-colors duration-300">{item.label}</span>
@@ -535,14 +582,18 @@ const Index = () => {
             ))}
           </div>
 
-          {/* Skills */}
-          <div className="grid gap-6 md:grid-cols-2 max-w-4xl mx-auto gsap-fade-up">
+          {/* Skills — with 3D depth */}
+          <div className="grid gap-6 md:grid-cols-2 max-w-4xl mx-auto gsap-fade-up perspective-section">
             <TiltCard delay={0.1} glare>
-              <div className="space-y-5">
+              <div className="space-y-5 relative">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/30 glass">
+                  <motion.div
+                    className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/30 glass-holo"
+                    whileHover={{ rotate: 360 }}
+                    transition={{ duration: 0.8 }}
+                  >
                     <Palette size={16} className="text-foreground/50" />
-                  </div>
+                  </motion.div>
                   <h3 className="font-heading text-base font-semibold text-foreground">Design</h3>
                 </div>
                 {designSkills.map((skill, i) => (
@@ -552,11 +603,15 @@ const Index = () => {
             </TiltCard>
 
             <TiltCard delay={0.2} glare>
-              <div className="space-y-5">
+              <div className="space-y-5 relative">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/30 glass">
+                  <motion.div
+                    className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/30 glass-holo"
+                    whileHover={{ rotate: 360 }}
+                    transition={{ duration: 0.8 }}
+                  >
                     <Terminal size={16} className="text-foreground/50" />
-                  </div>
+                  </motion.div>
                   <h3 className="font-heading text-base font-semibold text-foreground">Development</h3>
                 </div>
                 {devSkills.map((skill, i) => (
@@ -570,7 +625,8 @@ const Index = () => {
 
       {/* ═══════════════════ PORTFOLIO ═══════════════════ */}
       <section id="portfolio" className="gsap-section relative z-10 py-32">
-        <div className="container mx-auto px-6">
+        <div className="aurora-glow" />
+        <div className="container mx-auto px-6 relative z-10">
           <div className="gsap-fade-up">
             <SectionHeading title="Selected Work" subtitle="Projects that showcase design and development expertise." />
           </div>
@@ -585,7 +641,7 @@ const Index = () => {
                 onClick={() => setActiveFilter(cat)}
                 className={`rounded-full px-7 py-2.5 text-[10px] tracking-[0.2em] uppercase font-mono transition-all duration-500 ${
                   activeFilter === cat
-                    ? "glass-strong text-foreground glow-sm animated-gradient-border"
+                    ? "glass-holo text-foreground glow-sm animated-gradient-border"
                     : "text-muted-foreground/50 hover:text-foreground border border-transparent hover:border-border/20"
                 }`}
               >
@@ -594,50 +650,52 @@ const Index = () => {
             ))}
           </div>
 
-          {/* Project grid */}
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-w-7xl mx-auto gsap-fade-up">
+          {/* Project grid — cinematic 3D cards */}
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-w-7xl mx-auto gsap-fade-up perspective-section">
             <AnimatePresence mode="popLayout">
               {filtered.map((project, i) => (
                 <motion.div
                   key={project.title}
                   layout
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.5, delay: i * 0.06 }}
+                  initial={{ opacity: 0, y: 50, rotateX: 15 }}
+                  animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                  exit={{ opacity: 0, scale: 0.9, rotateX: -10 }}
+                  transition={{ duration: 0.6, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
                 >
-                  <motion.div
-                    whileHover={{ y: -10 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                    className="group glass-strong gradient-border rounded-2xl overflow-hidden h-full"
-                  >
-                    <div className="relative overflow-hidden">
-                      <motion.img
-                        src={project.image}
-                        alt={project.title}
-                        className="w-full h-52 object-cover"
-                        whileHover={{ scale: 1.1 }}
-                        transition={{ duration: 0.7 }}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent opacity-50 group-hover:opacity-80 transition-opacity duration-500" />
-                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-2 group-hover:translate-y-0">
-                        <span className="flex items-center gap-2 text-[10px] font-mono text-foreground tracking-[0.2em] uppercase glass-strong rounded-full px-5 py-2">
-                          <ExternalLink size={11} /> View Project
-                        </span>
+                  <SpotlightCard className="rounded-2xl h-full">
+                    <motion.div
+                      whileHover={{ y: -12, rotateX: -3, rotateY: 2, scale: 1.02 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                      className="group glass-holo gradient-border rounded-2xl overflow-hidden h-full card-3d"
+                    >
+                      <div className="relative overflow-hidden">
+                        <motion.img
+                          src={project.image}
+                          alt={project.title}
+                          className="w-full h-52 object-cover"
+                          whileHover={{ scale: 1.15 }}
+                          transition={{ duration: 0.7 }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent opacity-50 group-hover:opacity-80 transition-opacity duration-500" />
+                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-2 group-hover:translate-y-0">
+                          <span className="flex items-center gap-2 text-[10px] font-mono text-foreground tracking-[0.2em] uppercase glass-holo rounded-full px-5 py-2">
+                            <ExternalLink size={11} /> View Project
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                    <div className="p-5">
-                      <span className="text-[8px] tracking-[0.3em] text-muted-foreground/40 uppercase font-mono">
-                        {project.category}
-                      </span>
-                      <h3 className="font-heading text-sm font-semibold text-foreground mt-2 group-hover:text-gradient transition-all duration-300">
-                        {project.title}
-                      </h3>
-                      <p className="mt-2 text-[11px] text-muted-foreground/50 leading-relaxed">
-                        {project.description}
-                      </p>
-                    </div>
-                  </motion.div>
+                      <div className="p-5">
+                        <span className="text-[8px] tracking-[0.3em] text-muted-foreground/40 uppercase font-mono">
+                          {project.category}
+                        </span>
+                        <h3 className="font-heading text-sm font-semibold text-foreground mt-2 group-hover:text-gradient transition-all duration-300 reveal-line pb-1">
+                          {project.title}
+                        </h3>
+                        <p className="mt-2 text-[11px] text-muted-foreground/50 leading-relaxed">
+                          {project.description}
+                        </p>
+                      </div>
+                    </motion.div>
+                  </SpotlightCard>
                 </motion.div>
               ))}
             </AnimatePresence>
@@ -647,39 +705,44 @@ const Index = () => {
 
       {/* ═══════════════════ SERVICES ═══════════════════ */}
       <section id="services" className="gsap-section relative z-10 py-32">
-        <div className="container mx-auto px-6">
+        <div className="aurora-glow" />
+        <div className="container mx-auto px-6 relative z-10">
           <div className="gsap-fade-up">
             <SectionHeading title="Services" subtitle="What I bring to your next project." />
           </div>
 
           <div className="section-divider mx-auto w-full max-w-4xl mb-20" />
 
-          <div className="grid gap-5 sm:grid-cols-2 max-w-4xl mx-auto gsap-fade-up">
-            {services.map((service) => (
-              <motion.div
-                key={service.title}
-                whileHover={{ y: -8, scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="group relative glass-strong gradient-border rounded-2xl p-8 overflow-hidden"
-              >
-                <div className={`absolute inset-0 bg-gradient-to-br ${service.accent} opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-2xl`} />
-                
-                <div className="relative z-10">
-                  <motion.div
-                    className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border border-border/30 glass"
-                    whileHover={{ rotate: 10, scale: 1.1 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    <service.icon size={20} className="text-foreground/50 group-hover:text-foreground transition-colors duration-300" />
-                  </motion.div>
-                  <h3 className="font-heading text-base font-semibold text-foreground mb-3">
-                    {service.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground/60 leading-relaxed">
-                    {service.description}
-                  </p>
-                </div>
-              </motion.div>
+          <div className="grid gap-5 sm:grid-cols-2 max-w-4xl mx-auto gsap-fade-up perspective-section">
+            {services.map((service, i) => (
+              <SpotlightCard key={service.title} className="rounded-2xl">
+                <motion.div
+                  initial={{ opacity: 0, y: 40, rotateX: 10 }}
+                  whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+                  viewport={{ once: false, amount: 0.2 }}
+                  transition={{ delay: i * 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                  whileHover={{ y: -10, scale: 1.03, rotateX: -2, rotateY: 2 }}
+                  className="group relative glass-holo gradient-border rounded-2xl p-8 overflow-hidden card-3d scan-line"
+                >
+                  <div className={`absolute inset-0 bg-gradient-to-br ${service.accent} opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-2xl`} />
+                  
+                  <div className="relative z-10">
+                    <motion.div
+                      className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border border-border/30 glass-holo"
+                      whileHover={{ rotate: 15, scale: 1.15 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                    >
+                      <service.icon size={20} className="text-foreground/50 group-hover:text-foreground transition-colors duration-300" />
+                    </motion.div>
+                    <h3 className="font-heading text-base font-semibold text-foreground mb-3 reveal-line pb-1">
+                      {service.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground/60 leading-relaxed">
+                      {service.description}
+                    </p>
+                  </div>
+                </motion.div>
+              </SpotlightCard>
             ))}
           </div>
         </div>
@@ -687,67 +750,68 @@ const Index = () => {
 
       {/* ═══════════════════ TESTIMONIALS ═══════════════════ */}
       <section id="testimonials" className="gsap-section relative z-10 py-32 overflow-hidden">
-        <div className="container mx-auto px-6">
+        <div className="aurora-glow" />
+        <div className="container mx-auto px-6 relative z-10">
           <div className="gsap-fade-up">
             <SectionHeading title="Wall of Love" subtitle="What clients & collaborators say about working with me." />
           </div>
 
           <div className="section-divider mx-auto w-full max-w-5xl mb-16" />
 
-          <div className="grid gap-4 md:grid-cols-3 max-w-6xl mx-auto gsap-fade-up auto-rows-auto">
+          <div className="grid gap-4 md:grid-cols-3 max-w-6xl mx-auto gsap-fade-up auto-rows-auto perspective-section">
             {testimonials.map((t, i) => (
-              <motion.div
-                key={t.name}
-                initial={{ opacity: 0, y: 40, rotateX: 12 }}
-                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
-                viewport={{ once: false, amount: 0.2 }}
-                transition={{ delay: i * 0.07, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                whileHover={{ y: -6, scale: 1.02 }}
-                className={`group relative glass-strong gradient-border rounded-2xl p-7 overflow-hidden ${
-                  t.featured ? "md:row-span-2 flex flex-col justify-between" : ""
-                }`}
-                style={{ perspective: "800px" }}
-              >
-                <div className={`absolute inset-0 bg-gradient-to-br ${t.accent} opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-2xl`} />
+              <SpotlightCard key={t.name} className={`rounded-2xl ${t.featured ? "md:row-span-2" : ""}`}>
+                <motion.div
+                  initial={{ opacity: 0, y: 40, rotateX: 12 }}
+                  whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+                  viewport={{ once: false, amount: 0.2 }}
+                  transition={{ delay: i * 0.07, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                  whileHover={{ y: -8, scale: 1.02, rotateX: -2 }}
+                  className={`group relative glass-holo gradient-border rounded-2xl p-7 overflow-hidden h-full card-3d ${
+                    t.featured ? "flex flex-col justify-between" : ""
+                  }`}
+                >
+                  <div className={`absolute inset-0 bg-gradient-to-br ${t.accent} opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-2xl`} />
 
-                <div className="relative z-10">
-                  <div className="text-foreground/[0.04] font-heading text-7xl leading-none mb-1 select-none">"</div>
+                  <div className="relative z-10">
+                    <div className="text-foreground/[0.04] font-heading text-7xl leading-none mb-1 select-none">"</div>
 
-                  <p className={`text-foreground/70 leading-relaxed ${t.featured ? "text-base md:text-lg" : "text-sm"}`}>
-                    {t.quote}
-                  </p>
+                    <p className={`text-foreground/70 leading-relaxed ${t.featured ? "text-base md:text-lg" : "text-sm"}`}>
+                      {t.quote}
+                    </p>
 
-                  <div className="flex gap-0.5 mt-5 mb-4">
-                    {Array.from({ length: 5 }).map((_, si) => (
-                      <motion.div
-                        key={si}
-                        initial={{ opacity: 0, scale: 0 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: false }}
-                        transition={{ delay: i * 0.07 + si * 0.04 + 0.3 }}
-                      >
-                        <Star size={11} className="text-foreground/25 fill-foreground/25" />
-                      </motion.div>
-                    ))}
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full border border-border/30 glass text-foreground/40 font-heading text-[10px] font-bold">
-                      {t.name.split(" ").map(n => n[0]).join("")}
+                    <div className="flex gap-0.5 mt-5 mb-4">
+                      {Array.from({ length: 5 }).map((_, si) => (
+                        <motion.div
+                          key={si}
+                          initial={{ opacity: 0, scale: 0 }}
+                          whileInView={{ opacity: 1, scale: 1 }}
+                          viewport={{ once: false }}
+                          transition={{ delay: i * 0.07 + si * 0.04 + 0.3 }}
+                        >
+                          <Star size={11} className="text-foreground/25 fill-foreground/25" />
+                        </motion.div>
+                      ))}
                     </div>
-                    <div>
-                      <p className="text-xs font-medium text-foreground/80">{t.name}</p>
-                      <p className="text-[9px] text-muted-foreground/40 font-mono tracking-wide">{t.role}</p>
+
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-full border border-border/30 glass-holo text-foreground/40 font-heading text-[10px] font-bold">
+                        {t.name.split(" ").map(n => n[0]).join("")}
+                      </div>
+                      <div>
+                        <p className="text-xs font-medium text-foreground/80">{t.name}</p>
+                        <p className="text-[9px] text-muted-foreground/40 font-mono tracking-wide">{t.role}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {t.featured && (
-                  <div className="absolute top-4 right-4 text-[7px] tracking-[0.2em] uppercase font-mono text-muted-foreground/20 border border-border/20 rounded-full px-3 py-1">
-                    Featured
-                  </div>
-                )}
-              </motion.div>
+                  {t.featured && (
+                    <div className="absolute top-4 right-4 text-[7px] tracking-[0.2em] uppercase font-mono text-muted-foreground/20 border border-border/20 rounded-full px-3 py-1">
+                      Featured
+                    </div>
+                  )}
+                </motion.div>
+              </SpotlightCard>
             ))}
           </div>
         </div>
@@ -755,60 +819,69 @@ const Index = () => {
 
       {/* ═══════════════════ CONTACT ═══════════════════ */}
       <section id="contact" className="gsap-section relative z-10 py-32">
-        <div className="container mx-auto px-6">
+        <div className="aurora-glow" />
+        <div className="container mx-auto px-6 relative z-10">
           <div className="gsap-fade-up">
             <SectionHeading title="Let's Talk" subtitle="Have a project in mind? Let's make it happen." />
           </div>
 
           <div className="section-divider mx-auto w-full max-w-lg mb-14" />
 
-          <div className="max-w-lg mx-auto gsap-fade-up">
-            <div className="glass-strong gradient-border rounded-2xl p-10 relative overflow-hidden noise">
-              <form onSubmit={handleSubmit} className="space-y-7 relative z-10">
-                <div className="space-y-2">
-                  <label className="text-[9px] tracking-[0.3em] text-muted-foreground uppercase font-mono">Name</label>
-                  <input
-                    required
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="w-full rounded-xl border border-border/40 bg-secondary/20 px-5 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-foreground/25 transition-all font-mono"
-                    placeholder="your name"
-                  />
+          <div className="max-w-lg mx-auto gsap-fade-up perspective-section">
+            <SpotlightCard className="rounded-2xl">
+              <motion.div
+                initial={{ opacity: 0, y: 40, rotateX: 10 }}
+                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+                viewport={{ once: false }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                className="glass-holo gradient-border rounded-2xl p-10 relative overflow-hidden noise card-3d scan-line"
+              >
+                <form onSubmit={handleSubmit} className="space-y-7 relative z-10">
+                  <div className="space-y-2">
+                    <label className="text-[9px] tracking-[0.3em] text-muted-foreground uppercase font-mono">Name</label>
+                    <input
+                      required
+                      value={form.name}
+                      onChange={(e) => setForm({ ...form, name: e.target.value })}
+                      className="w-full rounded-xl border border-border/40 bg-secondary/20 px-5 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-foreground/25 focus:glow-sm transition-all font-mono"
+                      placeholder="your name"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[9px] tracking-[0.3em] text-muted-foreground uppercase font-mono">Phone</label>
+                    <input
+                      required
+                      value={form.phone}
+                      onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                      className="w-full rounded-xl border border-border/40 bg-secondary/20 px-5 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-foreground/25 focus:glow-sm transition-all font-mono"
+                      placeholder="your phone"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[9px] tracking-[0.3em] text-muted-foreground uppercase font-mono">Message</label>
+                    <textarea
+                      required
+                      rows={4}
+                      value={form.message}
+                      onChange={(e) => setForm({ ...form, message: e.target.value })}
+                      className="w-full rounded-xl border border-border/40 bg-secondary/20 px-5 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-foreground/25 focus:glow-sm transition-all resize-none font-mono"
+                      placeholder="tell me about your project..."
+                    />
+                  </div>
+                  <MagneticButton
+                    type="submit"
+                    className="w-full glass-holo animated-gradient-border rounded-xl py-4 text-sm font-medium tracking-[0.15em] uppercase text-foreground flex items-center justify-center gap-3 hover:glow-md transition-all duration-500"
+                  >
+                    <Send size={13} />
+                    Send via WhatsApp
+                  </MagneticButton>
+                </form>
+                <div className="mt-6 flex items-center justify-center gap-2 text-muted-foreground/60 relative z-10">
+                  <MessageCircle size={11} />
+                  <span className="text-[8px] tracking-[0.25em] font-mono uppercase">Opens WhatsApp directly</span>
                 </div>
-                <div className="space-y-2">
-                  <label className="text-[9px] tracking-[0.3em] text-muted-foreground uppercase font-mono">Phone</label>
-                  <input
-                    required
-                    value={form.phone}
-                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    className="w-full rounded-xl border border-border/40 bg-secondary/20 px-5 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-foreground/25 transition-all font-mono"
-                    placeholder="your phone"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[9px] tracking-[0.3em] text-muted-foreground uppercase font-mono">Message</label>
-                  <textarea
-                    required
-                    rows={4}
-                    value={form.message}
-                    onChange={(e) => setForm({ ...form, message: e.target.value })}
-                    className="w-full rounded-xl border border-border/40 bg-secondary/20 px-5 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-foreground/25 transition-all resize-none font-mono"
-                    placeholder="tell me about your project..."
-                  />
-                </div>
-                <MagneticButton
-                  type="submit"
-                  className="w-full glass-strong animated-gradient-border rounded-xl py-4 text-sm font-medium tracking-[0.15em] uppercase text-foreground flex items-center justify-center gap-3 hover:glow-md transition-all duration-500"
-                >
-                  <Send size={13} />
-                  Send via WhatsApp
-                </MagneticButton>
-              </form>
-              <div className="mt-6 flex items-center justify-center gap-2 text-muted-foreground/60 relative z-10">
-                <MessageCircle size={11} />
-                <span className="text-[8px] tracking-[0.25em] font-mono uppercase">Opens WhatsApp directly</span>
-              </div>
-            </div>
+              </motion.div>
+            </SpotlightCard>
           </div>
         </div>
       </section>
@@ -832,7 +905,7 @@ const Index = () => {
                   <button
                     key={id}
                     onClick={() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" })}
-                    className="block text-sm text-muted-foreground/60 hover:text-foreground transition-colors duration-300 capitalize tracking-wide"
+                    className="block text-sm text-muted-foreground/60 hover:text-foreground transition-colors duration-300 capitalize tracking-wide reveal-line pb-0.5"
                   >
                     {id === "hero" ? "Home" : id}
                   </button>
@@ -882,7 +955,7 @@ const Index = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="fixed bottom-8 right-8 z-50 glass-strong gradient-border rounded-full p-3.5 text-foreground/50 hover:text-foreground hover:glow-md transition-all duration-500"
+            className="fixed bottom-8 right-8 z-50 glass-holo gradient-border rounded-full p-3.5 text-foreground/50 hover:text-foreground hover:glow-md transition-all duration-500"
           >
             <ArrowUp size={14} />
           </motion.button>
