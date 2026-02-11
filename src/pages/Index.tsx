@@ -163,10 +163,14 @@ const Index = () => {
 
   const filtered = activeFilter === "All" ? projects : projects.filter((p) => p.category === activeFilter);
 
-  // Parallax for hero
+  // Parallax for hero — multi-layer depth
   const { scrollY } = useScroll();
-  const heroY = useTransform(scrollY, [0, 600], [0, 200]);
-  const heroOpacity = useTransform(scrollY, [0, 400], [1, 0]);
+  const heroY = useTransform(scrollY, [0, 800], [0, 350]);
+  const heroOpacity = useTransform(scrollY, [0, 500], [1, 0]);
+  const heroScale = useTransform(scrollY, [0, 800], [1, 0.8]);
+  
+  const aboutScale = useTransform(scrollY, [200, 900], [0.9, 1]);
+  const aboutY = useTransform(scrollY, [200, 900], [120, 0]);
 
   useEffect(() => {
     const onScroll = () => setShowTop(window.scrollY > 600);
@@ -267,8 +271,8 @@ const Index = () => {
 
         <motion.div
           id="hero-content"
-          className="relative z-10 text-center px-6"
-          style={{ y: heroY, opacity: heroOpacity }}
+          className="relative z-10 text-center px-6 will-change-transform"
+          style={{ y: heroY, opacity: heroOpacity, scale: heroScale }}
         >
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -358,7 +362,7 @@ const Index = () => {
       </section>
 
       {/* ═══════════════════ ABOUT ═══════════════════ */}
-      <section ref={aboutRef} id="about" className="gsap-section relative z-10 py-32">
+      <motion.section ref={aboutRef} id="about" className="gsap-section relative z-10 py-32 will-change-transform" style={{ scale: aboutScale, y: aboutY }}>
         <div id="about-inner" className="container mx-auto px-6">
           <div className="gsap-fade-up">
             <SectionHeading title="About" subtitle="A passionate creative who bridges the gap between design and development." />
@@ -421,7 +425,7 @@ const Index = () => {
             </TiltCard>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* ═══════════════════ PORTFOLIO ═══════════════════ */}
       <section id="portfolio" className="gsap-section relative z-10 py-32">
