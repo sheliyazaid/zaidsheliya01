@@ -401,7 +401,7 @@ const Index = () => {
                   initial={{ y: "120%" }}
                   animate={{ y: 0 }}
                   transition={{ delay: 0.5, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                  className="font-heading text-[clamp(3rem,10vw,10rem)] font-extrabold leading-[0.85] tracking-[-0.04em] text-gradient-premium glitch-text"
+                  className="font-heading text-[clamp(3rem,10vw,10rem)] font-extrabold leading-[0.85] tracking-[-0.04em] text-foreground glitch-text"
                   data-text="ZAID"
                 >
                   ZAID
@@ -412,7 +412,7 @@ const Index = () => {
                   initial={{ y: "120%" }}
                   animate={{ y: 0 }}
                   transition={{ delay: 0.65, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                  className="font-heading text-[clamp(3rem,10vw,10rem)] font-extrabold leading-[0.85] tracking-[-0.04em] text-gradient-premium glitch-text"
+                  className="font-heading text-[clamp(3rem,10vw,10rem)] font-extrabold leading-[0.85] tracking-[-0.04em] text-gradient glitch-text"
                   data-text="SHELIYA"
                 >
                   SHELIYA
