@@ -1,6 +1,6 @@
 import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
-import { ArrowDown, ExternalLink, Send, MessageCircle, Palette, Code, PenTool, Globe, Layout, Figma, Smartphone, Terminal, Github, Linkedin, Mail, Heart, ArrowUp, Instagram, Sparkles, Eye } from "lucide-react";
+import { ArrowDown, ExternalLink, Send, MessageCircle, Palette, Code, PenTool, Globe, Layout, Figma, Smartphone, Terminal, Github, Linkedin, Mail, Heart, ArrowUp, Instagram, Sparkles, Eye, Star } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionHeading from "../components/SectionHeading";
@@ -64,17 +64,26 @@ const projects = [
 ];
 
 const services = [
-  { icon: Palette, title: "UI/UX Design", description: "Crafting intuitive and beautiful user interfaces that put the user experience first.", accent: "from-purple-500/20 to-blue-500/20" },
-  { icon: PenTool, title: "Logo Design", description: "Creating memorable brand identities that communicate your values.", accent: "from-amber-500/20 to-orange-500/20" },
-  { icon: Globe, title: "Website Design", description: "Designing modern, responsive websites that convert visitors into customers.", accent: "from-cyan-500/20 to-teal-500/20" },
-  { icon: Code, title: "Frontend Development", description: "Building fast, interactive web applications with React & TypeScript.", accent: "from-emerald-500/20 to-green-500/20" },
+  { icon: Palette, title: "UI/UX Design", description: "Crafting intuitive and beautiful user interfaces that put the user experience first.", accent: "from-purple-500/10 to-blue-500/10" },
+  { icon: PenTool, title: "Logo Design", description: "Creating memorable brand identities that communicate your values.", accent: "from-amber-500/10 to-orange-500/10" },
+  { icon: Globe, title: "Website Design", description: "Designing modern, responsive websites that convert visitors into customers.", accent: "from-cyan-500/10 to-teal-500/10" },
+  { icon: Code, title: "Frontend Development", description: "Building fast, interactive web applications with React & TypeScript.", accent: "from-emerald-500/10 to-green-500/10" },
 ];
 
 const stats = [
-  { value: "50+", label: "Projects Completed" },
-  { value: "3+", label: "Years Experience" },
-  { value: "30+", label: "Happy Clients" },
+  { value: "50+", label: "Projects" },
+  { value: "3+", label: "Years" },
+  { value: "30+", label: "Clients" },
   { value: "100%", label: "Dedication" },
+];
+
+const testimonials = [
+  { name: "Arjun Patel", role: "CEO, TechVibe Studios", quote: "Zaid turned our vague idea into a brand that people actually recognize. His design sense is on another level — every pixel feels intentional.", featured: true, accent: "from-purple-500/10 to-blue-500/10" },
+  { name: "Sneha Kapoor", role: "Founder, Luxe & Co", quote: "The attention to detail is insane. Delivered ahead of schedule with quality that exceeded expectations.", featured: false, accent: "from-amber-500/10 to-orange-500/10" },
+  { name: "Rahul Sharma", role: "CTO, DevStack", quote: "Clean code, modern UI, and he actually understands both design AND development. Rare combo.", featured: false, accent: "from-cyan-500/10 to-teal-500/10" },
+  { name: "Priya Mehta", role: "Marketing Head, Bloom Agency", quote: "Our conversion rate jumped 40% after Zaid redesigned our landing page. The ROI speaks for itself.", featured: true, accent: "from-emerald-500/10 to-green-500/10" },
+  { name: "Vikram Desai", role: "Indie Filmmaker", quote: "He made my portfolio feel like a cinematic experience. People think I hired a whole agency.", featured: false, accent: "from-rose-500/10 to-pink-500/10" },
+  { name: "Ananya Iyer", role: "Product Designer, Nexus", quote: "Zaid's work ethic is unmatched. Fast communication, creative solutions, and zero drama. 10/10 would hire again.", featured: false, accent: "from-violet-500/10 to-indigo-500/10" },
 ];
 
 const categories = ["All", "Graphic Design", "Frontend"];
@@ -99,7 +108,7 @@ function SkillBar({ name, level, delay }: { name: string; level: number; delay: 
           whileInView={{ width: `${level}%` }}
           viewport={{ once: false, amount: 0.3 }}
           transition={{ delay: delay + 0.2, duration: 0.8, ease: "easeOut" }}
-          className="h-full rounded-full bg-gradient-to-r from-foreground/40 to-foreground/70"
+          className="h-full rounded-full bg-gradient-to-r from-foreground/30 to-foreground/60"
         />
       </div>
     </motion.div>
@@ -110,34 +119,34 @@ function SkillBar({ name, level, delay }: { name: string; level: number; delay: 
 function Counter({ value, label }: { value: string; label: string }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: false, amount: 0.3 }}
-      className="text-center group"
+      className="text-center group relative"
     >
-      <div className="font-heading text-5xl md:text-6xl font-bold text-foreground transition-all duration-500 group-hover:text-gradient">{value}</div>
-      <div className="mt-3 text-[10px] tracking-[0.25em] text-muted-foreground uppercase font-mono">{label}</div>
+      <div className="font-heading text-5xl md:text-7xl font-extrabold text-foreground/90 hero-number transition-all duration-500 group-hover:text-gradient">{value}</div>
+      <div className="mt-3 text-[9px] tracking-[0.3em] text-muted-foreground/50 uppercase font-mono">{label}</div>
     </motion.div>
   );
 }
 
 // ─── MARQUEE ────────────────────────────────────
 function InfiniteMarquee() {
-  const items = ["DESIGN", "⬡", "DEVELOP", "⬡", "CREATE", "⬡", "INNOVATE", "⬡", "INSPIRE", "⬡"];
+  const items = ["DESIGN", "✦", "DEVELOP", "✦", "CREATE", "✦", "INNOVATE", "✦", "INSPIRE", "✦"];
   return (
-    <div className="overflow-hidden py-8 border-y border-border/50 my-0 relative">
-      <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-background to-transparent z-10" />
-      <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-background to-transparent z-10" />
+    <div className="overflow-hidden py-10 border-y border-border/30 relative">
+      <div className="absolute inset-y-0 left-0 w-40 bg-gradient-to-r from-background to-transparent z-10" />
+      <div className="absolute inset-y-0 right-0 w-40 bg-gradient-to-l from-background to-transparent z-10" />
       <motion.div
         animate={{ x: ["0%", "-50%"] }}
-        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        className="flex gap-12 whitespace-nowrap"
+        transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+        className="flex gap-16 whitespace-nowrap"
       >
         {[...items, ...items, ...items, ...items].map((item, i) => (
           <span
             key={i}
-            className={`text-3xl md:text-5xl font-heading font-bold tracking-wider ${
-              item === "⬡" ? "text-muted-foreground/20 text-lg" : "text-foreground/[0.07]"
+            className={`font-heading font-extrabold tracking-[0.05em] ${
+              item === "✦" ? "text-foreground/[0.08] text-xl" : "text-foreground/[0.04] text-5xl md:text-7xl"
             }`}
           >
             {item}
@@ -190,13 +199,13 @@ const Index = () => {
 
   const filtered = activeFilter === "All" ? projects : projects.filter((p) => p.category === activeFilter);
 
-  // Parallax for hero — multi-layer depth
+  // Parallax
   const { scrollY } = useScroll();
-  const heroY = useTransform(scrollY, [0, 800], [0, 350]);
+  const heroY = useTransform(scrollY, [0, 800], [0, 400]);
   const heroOpacity = useTransform(scrollY, [0, 500], [1, 0]);
-  const heroScale = useTransform(scrollY, [0, 800], [1, 0.8]);
-  const aboutScale = useTransform(scrollY, [200, 900], [0.92, 1]);
-  const aboutY = useTransform(scrollY, [200, 900], [120, 0]);
+  const heroScale = useTransform(scrollY, [0, 800], [1, 0.75]);
+  const aboutScale = useTransform(scrollY, [200, 900], [0.9, 1]);
+  const aboutY = useTransform(scrollY, [200, 900], [150, 0]);
 
   useEffect(() => {
     const onScroll = () => setShowTop(window.scrollY > 600);
@@ -204,36 +213,21 @@ const Index = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // GSAP ScrollTrigger animations
+  // GSAP
   useEffect(() => {
     const ctx = gsap.context(() => {
       if (heroRef.current && aboutRef.current) {
         gsap.to("#hero-content", {
-          scrollTrigger: {
-            trigger: heroRef.current,
-            start: "top top",
-            end: "bottom top",
-            scrub: 1,
-          },
-          y: -100,
+          scrollTrigger: { trigger: heroRef.current, start: "top top", end: "bottom top", scrub: 1 },
+          y: -120,
           opacity: 0,
-          scale: 0.95,
+          scale: 0.9,
         });
 
-        gsap.fromTo(
-          "#about-inner",
-          { y: 80, opacity: 0 },
-          {
-            scrollTrigger: {
-              trigger: aboutRef.current,
-              start: "top 80%",
-              end: "top 30%",
-              scrub: 1,
-            },
-            y: 0,
-            opacity: 1,
-          }
-        );
+        gsap.fromTo("#about-inner", { y: 100, opacity: 0 }, {
+          scrollTrigger: { trigger: aboutRef.current, start: "top 80%", end: "top 30%", scrub: 1 },
+          y: 0, opacity: 1,
+        });
       }
 
       gsap.utils.toArray<HTMLElement>(".gsap-section").forEach((section) => {
@@ -241,31 +235,16 @@ const Index = () => {
           section.querySelectorAll(".gsap-fade-up"),
           { y: 60, opacity: 0 },
           {
-            scrollTrigger: {
-              trigger: section,
-              start: "top 80%",
-              end: "top 30%",
-              scrub: 0.8,
-              toggleActions: "play reverse play reverse",
-            },
-            y: 0,
-            opacity: 1,
-            stagger: 0.1,
+            scrollTrigger: { trigger: section, start: "top 80%", end: "top 30%", scrub: 0.8, toggleActions: "play reverse play reverse" },
+            y: 0, opacity: 1, stagger: 0.1,
           }
         );
       });
 
       gsap.utils.toArray<HTMLElement>(".gsap-line").forEach((el) => {
         gsap.fromTo(el, { scaleX: 0 }, {
-          scrollTrigger: {
-            trigger: el,
-            start: "top 85%",
-            end: "top 50%",
-            scrub: 0.5,
-            toggleActions: "play reverse play reverse",
-          },
-          scaleX: 1,
-          ease: "power3.out",
+          scrollTrigger: { trigger: el, start: "top 85%", end: "top 50%", scrub: 0.5, toggleActions: "play reverse play reverse" },
+          scaleX: 1, ease: "power3.out",
         });
       });
     }, mainRef);
@@ -290,107 +269,164 @@ const Index = () => {
         <ParticleBackground />
       </Suspense>
 
-      {/* ═══════════════════ HERO ═══════════════════ */}
-      <section ref={heroRef} id="hero" className="relative flex min-h-screen items-center justify-center overflow-hidden">
+      {/* ══════════════════════════════════════════════════════════
+          ██╗  ██╗███████╗██████╗  ██████╗ 
+          ██║  ██║██╔════╝██╔══██╗██╔═══██╗
+          ███████║█████╗  ██████╔╝██║   ██║
+          ██╔══██║██╔══╝  ██╔══██╗██║   ██║
+          ██║  ██║███████╗██║  ██║╚██████╔╝
+          ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝ ╚═════╝ 
+         ══════════════════════════════════════════════════════════ */}
+      <section ref={heroRef} id="hero" className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden">
         {/* Ambient glow orbs */}
-        <div className="orbital-glow w-[500px] h-[500px] bg-foreground/5 -top-40 -right-40" style={{ animation: "pulse-glow 6s ease-in-out infinite" }} />
-        <div className="orbital-glow w-[400px] h-[400px] bg-foreground/3 -bottom-20 -left-20" style={{ animation: "pulse-glow 8s ease-in-out 2s infinite" }} />
+        <div className="orbital-glow w-[600px] h-[600px] bg-foreground/5 -top-48 -right-48" style={{ animation: "pulse-glow 6s ease-in-out infinite" }} />
+        <div className="orbital-glow w-[500px] h-[500px] bg-foreground/3 -bottom-32 -left-32" style={{ animation: "pulse-glow 8s ease-in-out 2s infinite" }} />
+        <div className="lens-flare top-1/4 right-1/4" />
         
+        {/* 3D Scene */}
         <Suspense fallback={null}>
           <Scene3D className="z-0" />
         </Suspense>
 
+        {/* Side decorators */}
+        <motion.div 
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2, duration: 1 }}
+          className="absolute left-6 top-1/2 -translate-y-1/2 z-10 hidden lg:flex flex-col items-center gap-4"
+        >
+          <div className="w-px h-20 bg-gradient-to-b from-transparent via-foreground/10 to-transparent" />
+          <span className="text-[8px] tracking-[0.3em] text-muted-foreground/30 uppercase font-mono [writing-mode:vertical-lr] rotate-180">
+            Portfolio 2025
+          </span>
+          <div className="w-px h-20 bg-gradient-to-b from-transparent via-foreground/10 to-transparent" />
+        </motion.div>
+
+        <motion.div 
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2, duration: 1 }}
+          className="absolute right-6 top-1/2 -translate-y-1/2 z-10 hidden lg:flex flex-col items-center gap-4"
+        >
+          <div className="w-px h-16 bg-gradient-to-b from-transparent via-foreground/10 to-transparent" />
+          {[
+            { Icon: Github, href: "https://github.com/sheliyazaid" },
+            { Icon: Linkedin, href: "https://www.linkedin.com/in/zaid-sheliya/" },
+            { Icon: Instagram, href: "https://www.instagram.com/zaxd._.shelxya/" },
+            { Icon: Mail, href: "mailto:zaidsheliya16@gmail.com" },
+          ].map(({ Icon, href }) => (
+            <MagneticButton
+              key={href}
+              onClick={() => window.open(href, "_blank")}
+              className="text-muted-foreground/20 hover:text-foreground transition-all duration-500"
+            >
+              <Icon size={14} />
+            </MagneticButton>
+          ))}
+          <div className="w-px h-16 bg-gradient-to-b from-transparent via-foreground/10 to-transparent" />
+        </motion.div>
+
+        {/* Main hero content */}
         <motion.div
           id="hero-content"
-          className="relative z-10 text-center px-6 will-change-transform"
+          className="relative z-10 text-center px-6 will-change-transform max-w-6xl mx-auto"
           style={{ y: heroY, opacity: heroOpacity, scale: heroScale }}
         >
-          {/* Top badge */}
+          {/* Available badge */}
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="inline-flex items-center gap-3 rounded-full border border-border/60 glass px-5 py-2 mb-10"
+            initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            transition={{ delay: 0.3, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            className="inline-flex items-center gap-3 rounded-full border border-border/40 glass px-5 py-2 mb-12"
           >
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400/75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
             </span>
-            <span className="text-[10px] tracking-[0.25em] text-muted-foreground uppercase font-mono">
-              Available for work
+            <span className="text-[9px] tracking-[0.3em] text-muted-foreground/60 uppercase font-mono">
+              Available for Freelance
             </span>
           </motion.div>
 
-          {/* Name — massive and cinematic */}
-          <div className="overflow-hidden">
-            <motion.h1
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              transition={{ delay: 0.4, duration: 1, ease: [0.16, 1, 0.3, 1] }}
-              className="font-heading text-[clamp(3.5rem,12vw,12rem)] font-extrabold leading-[0.85] tracking-[-0.04em] text-foreground"
+          {/* Name — the centerpiece */}
+          <div className="relative">
+            {/* Ghost text behind */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8, duration: 1.5 }}
+              className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none"
             >
-              ZAID
-            </motion.h1>
-          </div>
-          <div className="overflow-hidden mt-2">
-            <motion.h1
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              transition={{ delay: 0.55, duration: 1, ease: [0.16, 1, 0.3, 1] }}
-              className="font-heading text-[clamp(3.5rem,12vw,12rem)] font-extrabold leading-[0.85] tracking-[-0.04em] text-gradient"
-            >
-              SHELIYA
-            </motion.h1>
+              <span className="font-heading text-[clamp(5rem,18vw,16rem)] font-extrabold leading-[0.8] text-stroke tracking-[-0.05em]">ZS</span>
+            </motion.div>
+
+            {/* Main name */}
+            <div className="overflow-hidden relative">
+              <motion.h1
+                initial={{ y: "120%" }}
+                animate={{ y: 0 }}
+                transition={{ delay: 0.5, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                className="font-heading text-[clamp(3rem,10vw,10rem)] font-extrabold leading-[0.85] tracking-[-0.04em] text-foreground"
+              >
+                ZAID
+              </motion.h1>
+            </div>
+            <div className="overflow-hidden mt-1">
+              <motion.h1
+                initial={{ y: "120%" }}
+                animate={{ y: 0 }}
+                transition={{ delay: 0.65, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                className="font-heading text-[clamp(3rem,10vw,10rem)] font-extrabold leading-[0.85] tracking-[-0.04em] text-gradient"
+              >
+                SHELIYA
+              </motion.h1>
+            </div>
           </div>
 
           {/* Typing role */}
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1, duration: 0.8 }}
-            className="mt-8 flex items-center justify-center gap-3"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.2, duration: 0.8 }}
+            className="mt-10 flex items-center justify-center gap-4"
           >
-            <div className="h-px w-8 bg-gradient-to-r from-transparent to-muted-foreground/50" />
-            <p className="text-sm text-muted-foreground md:text-base tracking-[0.15em] font-mono uppercase">
-              <span className="text-foreground/80">{typedText}</span>
-              <span className="animate-pulse text-foreground/40">▊</span>
+            <div className="h-px w-12 bg-gradient-to-r from-transparent to-muted-foreground/30" />
+            <p className="text-sm text-muted-foreground md:text-base tracking-[0.2em] font-mono uppercase">
+              <span className="text-foreground/70">{typedText}</span>
+              <span className="animate-pulse text-foreground/30 ml-0.5">▊</span>
             </p>
-            <div className="h-px w-8 bg-gradient-to-l from-transparent to-muted-foreground/50" />
+            <div className="h-px w-12 bg-gradient-to-l from-transparent to-muted-foreground/30" />
           </motion.div>
 
           {/* CTA buttons */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.2, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="mt-12 flex items-center justify-center gap-5"
+            transition={{ delay: 1.5, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-14 flex items-center justify-center gap-5 flex-wrap"
           >
             <MagneticButton
               onClick={() => document.getElementById("portfolio")?.scrollIntoView({ behavior: "smooth" })}
-              className="group relative overflow-hidden glass-strong rounded-full px-10 py-4 text-sm font-medium tracking-[0.15em] uppercase text-foreground transition-all duration-500 hover:glow-md"
+              className="group relative overflow-hidden glass-strong animated-gradient-border rounded-full px-12 py-4 text-sm font-medium tracking-[0.15em] uppercase text-foreground transition-all duration-500 hover:glow-md"
             >
-              <span className="relative z-10 flex items-center gap-2">
-                <Eye size={16} />
+              <span className="relative z-10 flex items-center gap-2.5">
+                <Eye size={15} />
                 View Work
               </span>
             </MagneticButton>
             <MagneticButton
               onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
-              className="rounded-full border border-foreground/10 px-10 py-4 text-sm font-medium tracking-[0.15em] uppercase text-muted-foreground transition-all duration-500 hover:border-foreground/30 hover:text-foreground hover:glow-sm"
+              className="rounded-full border border-foreground/8 px-12 py-4 text-sm font-medium tracking-[0.15em] uppercase text-muted-foreground/70 transition-all duration-500 hover:border-foreground/20 hover:text-foreground hover:glow-sm"
             >
-              <span className="flex items-center gap-2">
-                <Sparkles size={16} />
-                Get in Touch
+              <span className="flex items-center gap-2.5">
+                <Sparkles size={15} />
+                Let's Talk
               </span>
             </MagneticButton>
           </motion.div>
 
-          {/* Social links */}
+          {/* Mobile social links */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 1.5 }}
-            className="mt-14 flex items-center justify-center gap-5"
+            transition={{ delay: 1.8 }}
+            className="mt-12 flex items-center justify-center gap-5 lg:hidden"
           >
             {[
               { Icon: Github, href: "https://github.com/sheliyazaid" },
@@ -401,25 +437,50 @@ const Index = () => {
               <MagneticButton
                 key={href}
                 onClick={() => window.open(href, "_blank")}
-                className="group flex h-11 w-11 items-center justify-center rounded-full border border-border/40 text-muted-foreground/40 hover:text-foreground hover:border-foreground/20 hover:glow-sm transition-all duration-500"
+                className="text-muted-foreground/30 hover:text-foreground transition-all duration-500"
               >
-                <Icon size={16} className="transition-transform duration-300 group-hover:scale-110" />
+                <Icon size={16} />
               </MagneticButton>
             ))}
           </motion.div>
         </motion.div>
 
-        {/* Scroll indicator */}
+        {/* Bottom scroll indicator with stats teaser */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 2 }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-3"
+          transition={{ delay: 2.2 }}
+          className="absolute bottom-8 left-0 right-0 z-10 px-6"
         >
-          <span className="text-[9px] tracking-[0.3em] text-muted-foreground/40 uppercase font-mono">Scroll</span>
-          <motion.div animate={{ y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}>
-            <ArrowDown size={14} className="text-muted-foreground/40" />
-          </motion.div>
+          <div className="max-w-4xl mx-auto flex items-end justify-between">
+            {/* Mini stats */}
+            <div className="hidden md:flex items-center gap-8">
+              {stats.slice(0, 2).map((s) => (
+                <div key={s.label} className="text-left">
+                  <div className="text-lg font-heading font-bold text-foreground/30">{s.value}</div>
+                  <div className="text-[8px] tracking-[0.2em] text-muted-foreground/25 uppercase font-mono">{s.label}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Scroll */}
+            <div className="flex flex-col items-center gap-2 mx-auto md:mx-0">
+              <span className="text-[8px] tracking-[0.35em] text-muted-foreground/25 uppercase font-mono">Scroll down</span>
+              <motion.div animate={{ y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}>
+                <ArrowDown size={12} className="text-muted-foreground/25" />
+              </motion.div>
+            </div>
+
+            {/* Mini stats right */}
+            <div className="hidden md:flex items-center gap-8">
+              {stats.slice(2).map((s) => (
+                <div key={s.label} className="text-right">
+                  <div className="text-lg font-heading font-bold text-foreground/30">{s.value}</div>
+                  <div className="text-[8px] tracking-[0.2em] text-muted-foreground/25 uppercase font-mono">{s.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
         </motion.div>
       </section>
 
@@ -434,60 +495,55 @@ const Index = () => {
           </div>
 
           <div className="gsap-fade-up max-w-2xl mx-auto text-center mb-24">
-            <p className="text-muted-foreground leading-relaxed text-lg">
+            <p className="text-muted-foreground/70 leading-relaxed text-lg">
               I'm <span className="text-foreground font-medium">Zaid Sheliya</span> — a designer who codes and a developer who designs.
               I create digital experiences that are both visually stunning and technically sound.
             </p>
           </div>
 
-          {/* Stats — dramatic */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-24 gsap-fade-up max-w-5xl mx-auto">
-            {stats.map((stat, i) => (
+          {/* Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-24 gsap-fade-up max-w-5xl mx-auto">
+            {stats.map((stat) => (
               <motion.div
                 key={stat.label}
-                className="relative group"
-                whileHover={{ scale: 1.05 }}
+                className="relative group glass-strong gradient-border rounded-2xl p-8"
+                whileHover={{ scale: 1.05, y: -4 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-foreground/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="relative p-6">
-                  <Counter {...stat} />
-                </div>
+                <Counter {...stat} />
               </motion.div>
             ))}
           </div>
 
           <div className="section-divider mx-auto w-full max-w-5xl mb-20" />
 
-          {/* Highlights — glass pills */}
-          <div className="flex flex-wrap justify-center gap-4 mb-24 gsap-fade-up">
+          {/* Highlights */}
+          <div className="flex flex-wrap justify-center gap-3 mb-24 gsap-fade-up">
             {highlights.map((item, i) => (
               <motion.div
                 key={item.label}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: false }}
-                transition={{ delay: i * 0.08 }}
+                transition={{ delay: i * 0.06 }}
                 whileHover={{ scale: 1.08, y: -4 }}
-                className="glass-strong gradient-border rounded-2xl px-6 py-4 flex items-center gap-3 group"
+                className="glass-strong gradient-border rounded-full px-5 py-3 flex items-center gap-2.5 group"
               >
-                <motion.div whileHover={{ rotate: 360 }} transition={{ duration: 0.6 }}>
-                  <item.icon size={18} className="text-muted-foreground group-hover:text-foreground transition-colors duration-300" />
-                </motion.div>
-                <span className="text-xs text-muted-foreground tracking-[0.12em] uppercase font-mono group-hover:text-foreground transition-colors duration-300">{item.label}</span>
+                <item.icon size={14} className="text-muted-foreground/50 group-hover:text-foreground transition-colors duration-300" />
+                <span className="text-[10px] text-muted-foreground/60 tracking-[0.12em] uppercase font-mono group-hover:text-foreground transition-colors duration-300">{item.label}</span>
               </motion.div>
             ))}
           </div>
 
           {/* Skills */}
-          <div className="grid gap-8 md:grid-cols-2 max-w-4xl mx-auto gsap-fade-up">
+          <div className="grid gap-6 md:grid-cols-2 max-w-4xl mx-auto gsap-fade-up">
             <TiltCard delay={0.1} glare>
               <div className="space-y-5">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/50 glass">
-                    <Palette size={18} className="text-foreground/60" />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/30 glass">
+                    <Palette size={16} className="text-foreground/50" />
                   </div>
-                  <h3 className="font-heading text-lg font-semibold text-foreground">Design</h3>
+                  <h3 className="font-heading text-base font-semibold text-foreground">Design</h3>
                 </div>
                 {designSkills.map((skill, i) => (
                   <SkillBar key={skill.name} {...skill} delay={i * 0.08} />
@@ -498,10 +554,10 @@ const Index = () => {
             <TiltCard delay={0.2} glare>
               <div className="space-y-5">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/50 glass">
-                    <Terminal size={18} className="text-foreground/60" />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/30 glass">
+                    <Terminal size={16} className="text-foreground/50" />
                   </div>
-                  <h3 className="font-heading text-lg font-semibold text-foreground">Development</h3>
+                  <h3 className="font-heading text-base font-semibold text-foreground">Development</h3>
                 </div>
                 {devSkills.map((skill, i) => (
                   <SkillBar key={skill.name} {...skill} delay={i * 0.08} />
@@ -529,8 +585,8 @@ const Index = () => {
                 onClick={() => setActiveFilter(cat)}
                 className={`rounded-full px-7 py-2.5 text-[10px] tracking-[0.2em] uppercase font-mono transition-all duration-500 ${
                   activeFilter === cat
-                    ? "glass-strong text-foreground glow-sm gradient-border"
-                    : "text-muted-foreground/60 hover:text-foreground border border-transparent hover:border-border/30"
+                    ? "glass-strong text-foreground glow-sm animated-gradient-border"
+                    : "text-muted-foreground/50 hover:text-foreground border border-transparent hover:border-border/20"
                 }`}
               >
                 {cat}
@@ -539,47 +595,45 @@ const Index = () => {
           </div>
 
           {/* Project grid */}
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-w-7xl mx-auto gsap-fade-up">
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-w-7xl mx-auto gsap-fade-up">
             <AnimatePresence mode="popLayout">
               {filtered.map((project, i) => (
                 <motion.div
                   key={project.title}
                   layout
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.4, delay: i * 0.05 }}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.5, delay: i * 0.06 }}
                 >
                   <motion.div
-                    whileHover={{ y: -8 }}
+                    whileHover={{ y: -10 }}
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
                     className="group glass-strong gradient-border rounded-2xl overflow-hidden h-full"
                   >
-                    {/* Image */}
                     <div className="relative overflow-hidden">
                       <motion.img
                         src={project.image}
                         alt={project.title}
-                        className="w-full h-48 object-cover"
+                        className="w-full h-52 object-cover"
                         whileHover={{ scale: 1.1 }}
-                        transition={{ duration: 0.6 }}
+                        transition={{ duration: 0.7 }}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
-                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
-                        <span className="flex items-center gap-2 text-xs font-mono text-foreground tracking-[0.15em] uppercase glass-strong rounded-full px-5 py-2">
-                          <ExternalLink size={12} /> View
+                      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent opacity-50 group-hover:opacity-80 transition-opacity duration-500" />
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-2 group-hover:translate-y-0">
+                        <span className="flex items-center gap-2 text-[10px] font-mono text-foreground tracking-[0.2em] uppercase glass-strong rounded-full px-5 py-2">
+                          <ExternalLink size={11} /> View Project
                         </span>
                       </div>
                     </div>
-                    {/* Content */}
                     <div className="p-5">
-                      <span className="text-[9px] tracking-[0.25em] text-muted-foreground/60 uppercase font-mono">
+                      <span className="text-[8px] tracking-[0.3em] text-muted-foreground/40 uppercase font-mono">
                         {project.category}
                       </span>
-                      <h3 className="font-heading text-base font-semibold text-foreground mt-2 group-hover:text-gradient transition-all duration-300">
+                      <h3 className="font-heading text-sm font-semibold text-foreground mt-2 group-hover:text-gradient transition-all duration-300">
                         {project.title}
                       </h3>
-                      <p className="mt-2 text-xs text-muted-foreground/70 leading-relaxed">
+                      <p className="mt-2 text-[11px] text-muted-foreground/50 leading-relaxed">
                         {project.description}
                       </p>
                     </div>
@@ -600,29 +654,28 @@ const Index = () => {
 
           <div className="section-divider mx-auto w-full max-w-4xl mb-20" />
 
-          <div className="grid gap-6 sm:grid-cols-2 max-w-4xl mx-auto gsap-fade-up">
-            {services.map((service, i) => (
+          <div className="grid gap-5 sm:grid-cols-2 max-w-4xl mx-auto gsap-fade-up">
+            {services.map((service) => (
               <motion.div
                 key={service.title}
-                whileHover={{ y: -6, scale: 1.02 }}
+                whileHover={{ y: -8, scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
                 className="group relative glass-strong gradient-border rounded-2xl p-8 overflow-hidden"
               >
-                {/* Ambient gradient */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${service.accent} opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-2xl`} />
                 
                 <div className="relative z-10">
                   <motion.div
-                    className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border border-border/50 glass"
+                    className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border border-border/30 glass"
                     whileHover={{ rotate: 10, scale: 1.1 }}
                     transition={{ type: "spring", stiffness: 300 }}
                   >
-                    <service.icon size={22} className="text-foreground/60 group-hover:text-foreground transition-colors duration-300" />
+                    <service.icon size={20} className="text-foreground/50 group-hover:text-foreground transition-colors duration-300" />
                   </motion.div>
-                  <h3 className="font-heading text-lg font-semibold text-foreground mb-3">
+                  <h3 className="font-heading text-base font-semibold text-foreground mb-3">
                     {service.title}
                   </h3>
-                  <p className="text-sm text-muted-foreground/70 leading-relaxed">
+                  <p className="text-sm text-muted-foreground/60 leading-relaxed">
                     {service.description}
                   </p>
                 </div>
@@ -641,118 +694,58 @@ const Index = () => {
 
           <div className="section-divider mx-auto w-full max-w-5xl mb-16" />
 
-          {/* Bento-style testimonial grid */}
           <div className="grid gap-4 md:grid-cols-3 max-w-6xl mx-auto gsap-fade-up auto-rows-auto">
-            {[
-              {
-                name: "Arjun Patel",
-                role: "CEO, TechVibe Studios",
-                quote: "Zaid turned our vague idea into a brand that people actually recognize. His design sense is on another level — every pixel feels intentional.",
-                rating: 5,
-                featured: true,
-                accent: "from-purple-500/10 to-blue-500/10",
-              },
-              {
-                name: "Sneha Kapoor",
-                role: "Founder, Luxe & Co",
-                quote: "The attention to detail is insane. Delivered ahead of schedule with quality that exceeded expectations.",
-                rating: 5,
-                featured: false,
-                accent: "from-amber-500/10 to-orange-500/10",
-              },
-              {
-                name: "Rahul Sharma",
-                role: "CTO, DevStack",
-                quote: "Clean code, modern UI, and he actually understands both design AND development. Rare combo.",
-                rating: 5,
-                featured: false,
-                accent: "from-cyan-500/10 to-teal-500/10",
-              },
-              {
-                name: "Priya Mehta",
-                role: "Marketing Head, Bloom Agency",
-                quote: "Our conversion rate jumped 40% after Zaid redesigned our landing page. The ROI speaks for itself.",
-                rating: 5,
-                featured: true,
-                accent: "from-emerald-500/10 to-green-500/10",
-              },
-              {
-                name: "Vikram Desai",
-                role: "Indie Filmmaker",
-                quote: "He made my portfolio feel like a cinematic experience. People think I hired a whole agency.",
-                rating: 5,
-                featured: false,
-                accent: "from-rose-500/10 to-pink-500/10",
-              },
-              {
-                name: "Ananya Iyer",
-                role: "Product Designer, Nexus",
-                quote: "Zaid's work ethic is unmatched. Fast communication, creative solutions, and zero drama. 10/10 would hire again.",
-                rating: 5,
-                featured: false,
-                accent: "from-violet-500/10 to-indigo-500/10",
-              },
-            ].map((t, i) => (
+            {testimonials.map((t, i) => (
               <motion.div
                 key={t.name}
-                initial={{ opacity: 0, y: 40, rotateX: 15 }}
+                initial={{ opacity: 0, y: 40, rotateX: 12 }}
                 whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
                 viewport={{ once: false, amount: 0.2 }}
-                transition={{ delay: i * 0.08, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ delay: i * 0.07, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                 whileHover={{ y: -6, scale: 1.02 }}
                 className={`group relative glass-strong gradient-border rounded-2xl p-7 overflow-hidden ${
                   t.featured ? "md:row-span-2 flex flex-col justify-between" : ""
                 }`}
                 style={{ perspective: "800px" }}
               >
-                {/* Hover gradient */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${t.accent} opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-2xl`} />
 
                 <div className="relative z-10">
-                  {/* Quote icon */}
-                  <div className="text-foreground/[0.06] font-heading text-7xl leading-none mb-1 select-none">"</div>
+                  <div className="text-foreground/[0.04] font-heading text-7xl leading-none mb-1 select-none">"</div>
 
-                  <p className={`text-foreground/80 leading-relaxed ${t.featured ? "text-base md:text-lg" : "text-sm"}`}>
+                  <p className={`text-foreground/70 leading-relaxed ${t.featured ? "text-base md:text-lg" : "text-sm"}`}>
                     {t.quote}
                   </p>
 
-                  {/* Stars */}
-                  <div className="flex gap-1 mt-5 mb-4">
-                    {Array.from({ length: t.rating }).map((_, si) => (
-                      <motion.span
+                  <div className="flex gap-0.5 mt-5 mb-4">
+                    {Array.from({ length: 5 }).map((_, si) => (
+                      <motion.div
                         key={si}
                         initial={{ opacity: 0, scale: 0 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ once: false }}
-                        transition={{ delay: i * 0.08 + si * 0.05 + 0.3 }}
-                        className="text-foreground/40 text-xs"
+                        transition={{ delay: i * 0.07 + si * 0.04 + 0.3 }}
                       >
-                        ★
-                      </motion.span>
+                        <Star size={11} className="text-foreground/25 fill-foreground/25" />
+                      </motion.div>
                     ))}
                   </div>
 
-                  {/* Author */}
                   <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full border border-border/40 glass text-foreground/50 font-heading text-xs font-bold">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full border border-border/30 glass text-foreground/40 font-heading text-[10px] font-bold">
                       {t.name.split(" ").map(n => n[0]).join("")}
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-foreground">{t.name}</p>
-                      <p className="text-[10px] text-muted-foreground/50 font-mono tracking-wide">{t.role}</p>
+                      <p className="text-xs font-medium text-foreground/80">{t.name}</p>
+                      <p className="text-[9px] text-muted-foreground/40 font-mono tracking-wide">{t.role}</p>
                     </div>
                   </div>
                 </div>
 
-                {/* Corner badge for featured */}
                 {t.featured && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    className="absolute top-4 right-4 text-[8px] tracking-[0.2em] uppercase font-mono text-muted-foreground/30 border border-border/30 rounded-full px-3 py-1"
-                  >
+                  <div className="absolute top-4 right-4 text-[7px] tracking-[0.2em] uppercase font-mono text-muted-foreground/20 border border-border/20 rounded-full px-3 py-1">
                     Featured
-                  </motion.div>
+                  </div>
                 )}
               </motion.div>
             ))}
@@ -773,47 +766,47 @@ const Index = () => {
             <div className="glass-strong gradient-border rounded-2xl p-10 relative overflow-hidden noise">
               <form onSubmit={handleSubmit} className="space-y-7 relative z-10">
                 <div className="space-y-2">
-                  <label className="text-[10px] tracking-[0.25em] text-muted-foreground/70 uppercase font-mono">Name</label>
+                  <label className="text-[9px] tracking-[0.3em] text-muted-foreground/50 uppercase font-mono">Name</label>
                   <input
                     required
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="w-full rounded-xl border border-border/40 bg-secondary/30 px-5 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-foreground/20 focus:glow-sm transition-all font-mono"
+                    className="w-full rounded-xl border border-border/30 bg-secondary/20 px-5 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/20 focus:outline-none focus:border-foreground/15 transition-all font-mono"
                     placeholder="your name"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] tracking-[0.25em] text-muted-foreground/70 uppercase font-mono">Phone</label>
+                  <label className="text-[9px] tracking-[0.3em] text-muted-foreground/50 uppercase font-mono">Phone</label>
                   <input
                     required
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    className="w-full rounded-xl border border-border/40 bg-secondary/30 px-5 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-foreground/20 focus:glow-sm transition-all font-mono"
+                    className="w-full rounded-xl border border-border/30 bg-secondary/20 px-5 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/20 focus:outline-none focus:border-foreground/15 transition-all font-mono"
                     placeholder="your phone"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] tracking-[0.25em] text-muted-foreground/70 uppercase font-mono">Message</label>
+                  <label className="text-[9px] tracking-[0.3em] text-muted-foreground/50 uppercase font-mono">Message</label>
                   <textarea
                     required
                     rows={4}
                     value={form.message}
                     onChange={(e) => setForm({ ...form, message: e.target.value })}
-                    className="w-full rounded-xl border border-border/40 bg-secondary/30 px-5 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-foreground/20 focus:glow-sm transition-all resize-none font-mono"
+                    className="w-full rounded-xl border border-border/30 bg-secondary/20 px-5 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/20 focus:outline-none focus:border-foreground/15 transition-all resize-none font-mono"
                     placeholder="tell me about your project..."
                   />
                 </div>
                 <MagneticButton
                   type="submit"
-                  className="w-full glass-strong gradient-border rounded-xl py-4 text-sm font-medium tracking-[0.15em] uppercase text-foreground flex items-center justify-center gap-3 hover:glow-md transition-all duration-500"
+                  className="w-full glass-strong animated-gradient-border rounded-xl py-4 text-sm font-medium tracking-[0.15em] uppercase text-foreground flex items-center justify-center gap-3 hover:glow-md transition-all duration-500"
                 >
-                  <Send size={14} />
+                  <Send size={13} />
                   Send via WhatsApp
                 </MagneticButton>
               </form>
-              <div className="mt-6 flex items-center justify-center gap-2 text-muted-foreground/40 relative z-10">
-                <MessageCircle size={12} />
-                <span className="text-[9px] tracking-[0.2em] font-mono uppercase">Opens WhatsApp directly</span>
+              <div className="mt-6 flex items-center justify-center gap-2 text-muted-foreground/30 relative z-10">
+                <MessageCircle size={11} />
+                <span className="text-[8px] tracking-[0.25em] font-mono uppercase">Opens WhatsApp directly</span>
               </div>
             </div>
           </div>
@@ -821,36 +814,33 @@ const Index = () => {
       </section>
 
       {/* ═══════════════════ FOOTER ═══════════════════ */}
-      <footer className="relative z-10 border-t border-border/40">
+      <footer className="relative z-10 border-t border-border/20">
         <div className="container mx-auto px-6">
           <div className="grid md:grid-cols-3 gap-12 py-20">
-            {/* Brand */}
             <div>
-              <p className="font-heading text-3xl font-bold tracking-wider text-foreground mb-4">
+              <p className="font-heading text-3xl font-extrabold tracking-wider text-foreground mb-4">
                 ZS<span className="text-gradient-gold">.</span>
               </p>
-              <p className="text-sm text-muted-foreground/60 leading-relaxed max-w-xs">
+              <p className="text-sm text-muted-foreground/40 leading-relaxed max-w-xs">
                 A creative developer crafting digital experiences that blend stunning design with clean, performant code.
               </p>
             </div>
-            {/* Quick Links */}
             <div>
-              <h4 className="text-[10px] tracking-[0.25em] text-foreground/80 uppercase font-mono mb-8">Quick Links</h4>
+              <h4 className="text-[9px] tracking-[0.3em] text-foreground/60 uppercase font-mono mb-8">Quick Links</h4>
               <div className="space-y-4">
                 {["hero", "about", "portfolio", "services", "contact"].map((id) => (
                   <button
                     key={id}
                     onClick={() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" })}
-                    className="block text-sm text-muted-foreground/50 hover:text-foreground transition-colors duration-300 capitalize tracking-wide"
+                    className="block text-sm text-muted-foreground/35 hover:text-foreground transition-colors duration-300 capitalize tracking-wide"
                   >
                     {id === "hero" ? "Home" : id}
                   </button>
                 ))}
               </div>
             </div>
-            {/* Connect */}
             <div>
-              <h4 className="text-[10px] tracking-[0.25em] text-foreground/80 uppercase font-mono mb-8">Connect</h4>
+              <h4 className="text-[9px] tracking-[0.3em] text-foreground/60 uppercase font-mono mb-8">Connect</h4>
               <div className="flex gap-3 mb-6">
                 {[
                   { Icon: Github, label: "GitHub", href: "https://github.com/sheliyazaid" },
@@ -861,25 +851,24 @@ const Index = () => {
                   <MagneticButton
                     key={label}
                     onClick={() => window.open(href, "_blank")}
-                    className="flex h-11 w-11 items-center justify-center rounded-xl border border-border/30 text-muted-foreground/40 hover:text-foreground hover:border-foreground/20 hover:glow-sm transition-all duration-500"
+                    className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/20 text-muted-foreground/30 hover:text-foreground hover:border-foreground/15 hover:glow-sm transition-all duration-500"
                   >
-                    <Icon size={15} />
+                    <Icon size={14} />
                   </MagneticButton>
                 ))}
               </div>
-              <p className="text-xs text-muted-foreground/40 font-mono tracking-wide">
+              <p className="text-[11px] text-muted-foreground/30 font-mono tracking-wide">
                 zaidsheliya16@gmail.com
               </p>
             </div>
           </div>
-          {/* Bottom */}
           <div className="section-divider" />
           <div className="py-8 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-[10px] text-muted-foreground/40 tracking-[0.15em] font-mono">
+            <p className="text-[9px] text-muted-foreground/30 tracking-[0.15em] font-mono">
               © {new Date().getFullYear()} Zaid Sheliya. All rights reserved.
             </p>
-            <p className="text-[10px] text-muted-foreground/40 tracking-[0.15em] font-mono flex items-center gap-1.5">
-              Designed & Built with <Heart size={10} className="text-foreground/30" /> in India
+            <p className="text-[9px] text-muted-foreground/30 tracking-[0.15em] font-mono flex items-center gap-1.5">
+              Designed & Built with <Heart size={9} className="text-foreground/20" /> in India
             </p>
           </div>
         </div>
@@ -893,9 +882,9 @@ const Index = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="fixed bottom-8 right-8 z-50 glass-strong gradient-border rounded-full p-3.5 text-foreground/60 hover:text-foreground hover:glow-md transition-all duration-500"
+            className="fixed bottom-8 right-8 z-50 glass-strong gradient-border rounded-full p-3.5 text-foreground/50 hover:text-foreground hover:glow-md transition-all duration-500"
           >
-            <ArrowUp size={16} />
+            <ArrowUp size={14} />
           </motion.button>
         )}
       </AnimatePresence>
