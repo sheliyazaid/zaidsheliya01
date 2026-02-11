@@ -162,11 +162,11 @@
   }
 
   .glass-strong {
-    background: hsla(0 0% 100% / 0.06);
+    background: hsla(0 0% 100% / 0.04);
     backdrop-filter: blur(30px) saturate(1.8);
     -webkit-backdrop-filter: blur(30px) saturate(1.8);
-    border: 1px solid hsla(0 0% 100% / 0.1);
-    box-shadow: var(--glass-shadow), inset 0 1px 0 0 hsla(0 0% 100% / 0.05);
+    border: 1px solid hsla(0 0% 100% / 0.07);
+    box-shadow: var(--glass-shadow), inset 0 1px 0 0 hsla(0 0% 100% / 0.04);
   }
 
   .text-gradient {
@@ -174,9 +174,9 @@
     background-image: linear-gradient(
       135deg,
       hsl(0 0% 100%) 0%,
-      hsl(0 0% 70%) 40%,
-      hsl(40 30% 70%) 60%,
-      hsl(0 0% 50%) 100%
+      hsl(0 0% 60%) 50%,
+      hsl(40 40% 65%) 75%,
+      hsl(0 0% 45%) 100%
     );
   }
 
@@ -184,10 +184,21 @@
     @apply bg-clip-text text-transparent;
     background-image: linear-gradient(
       135deg,
-      hsl(40 60% 70%) 0%,
-      hsl(35 80% 55%) 50%,
-      hsl(30 50% 60%) 100%
+      hsl(45 80% 70%) 0%,
+      hsl(35 90% 55%) 50%,
+      hsl(25 60% 60%) 100%
     );
+  }
+
+  /* Stroke text for dramatic headings */
+  .text-stroke {
+    -webkit-text-stroke: 1px hsla(0 0% 100% / 0.15);
+    color: transparent;
+  }
+
+  .text-stroke-thick {
+    -webkit-text-stroke: 2px hsla(0 0% 100% / 0.1);
+    color: transparent;
   }
 
   .glow-sm {
@@ -224,11 +235,35 @@
     inset: 0;
     border-radius: inherit;
     padding: 1px;
-    background: linear-gradient(135deg, hsla(0 0% 100% / 0.15), hsla(0 0% 100% / 0.02), hsla(40 70% 50% / 0.1));
+    background: linear-gradient(135deg, hsla(0 0% 100% / 0.12), hsla(0 0% 100% / 0.01), hsla(40 70% 50% / 0.08));
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     pointer-events: none;
+  }
+
+  /* Animated gradient border */
+  .animated-gradient-border {
+    position: relative;
+  }
+  .animated-gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: conic-gradient(
+      from var(--border-angle, 0deg),
+      hsla(0 0% 100% / 0.02),
+      hsla(0 0% 100% / 0.12),
+      hsla(40 70% 50% / 0.15),
+      hsla(0 0% 100% / 0.02)
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    animation: rotate-border 4s linear infinite;
   }
 
   /* Shimmer line */
@@ -236,9 +271,9 @@
     background: linear-gradient(
       90deg,
       transparent 0%,
-      hsla(0 0% 100% / 0.08) 20%,
-      hsla(40 70% 50% / 0.15) 50%,
-      hsla(0 0% 100% / 0.08) 80%,
+      hsla(0 0% 100% / 0.06) 20%,
+      hsla(40 70% 50% / 0.12) 50%,
+      hsla(0 0% 100% / 0.06) 80%,
       transparent 100%
     );
     background-size: 200% 100%;
@@ -249,10 +284,9 @@
   .orbital-glow {
     position: absolute;
     border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.15;
+    filter: blur(100px);
+    opacity: 0.12;
     pointer-events: none;
-    animation: float 8s ease-in-out infinite;
   }
 
   .cursor-glow {
@@ -281,11 +315,28 @@
     background: linear-gradient(
       90deg,
       transparent 0%,
-      hsla(0 0% 100% / 0.1) 20%,
-      hsla(0 0% 100% / 0.2) 50%,
-      hsla(0 0% 100% / 0.1) 80%,
+      hsla(0 0% 100% / 0.08) 20%,
+      hsla(0 0% 100% / 0.15) 50%,
+      hsla(0 0% 100% / 0.08) 80%,
       transparent 100%
     );
+  }
+
+  /* Hero number line */
+  .hero-number {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+
+  /* Lens flare */
+  .lens-flare {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, hsla(40 80% 60% / 0.08) 0%, transparent 60%);
+    pointer-events: none;
+    animation: lens-pulse 5s ease-in-out infinite;
   }
 }
 
@@ -305,8 +356,24 @@
 }
 
 @keyframes pulse-glow {
-  0%, 100% { opacity: 0.15; filter: blur(80px); }
-  50% { opacity: 0.25; filter: blur(100px); }
+  0%, 100% { opacity: 0.1; transform: scale(1); }
+  50% { opacity: 0.2; transform: scale(1.05); }
+}
+
+@keyframes rotate-border {
+  0% { --border-angle: 0deg; }
+  100% { --border-angle: 360deg; }
+}
+
+@property --border-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes lens-pulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.2); }
 }
 
 @keyframes grain {
