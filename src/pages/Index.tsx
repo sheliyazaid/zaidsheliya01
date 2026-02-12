@@ -1,6 +1,6 @@
 import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
-import { ArrowDown, ExternalLink, Send, MessageCircle, Palette, Code, PenTool, Globe, Layout, Figma, Smartphone, Terminal, Github, Linkedin, Mail, Heart, ArrowUp, Instagram, Eye, Star } from "lucide-react";
+import { ExternalLink, Send, MessageCircle, Palette, Code, PenTool, Globe, Layout, Figma, Smartphone, Terminal, Github, Linkedin, Mail, Heart, ArrowUp, Instagram, Eye, Star } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionHeading from "../components/SectionHeading";
@@ -316,203 +316,150 @@ const Index = () => {
 
       {/* ══════════════════ HERO ══════════════════ */}
       <section ref={heroRef} id="hero" className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden">
-        {/* Radial gradient backdrop */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_hsla(0,0%,15%,0.3)_0%,_transparent_70%)]" />
+        {/* Layered gradient backdrops */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,_hsla(0,0%,20%,0.4)_0%,_transparent_70%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_50%_120%,_hsla(0,0%,10%,0.3)_0%,_transparent_60%)]" />
+        
+        {/* Grain overlay */}
+        <div className="absolute inset-0 z-[2] pointer-events-none opacity-[0.035]" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E\")", backgroundRepeat: "repeat" }} />
+        
+        {/* Scanlines */}
+        <div className="absolute inset-0 z-[1] pointer-events-none hero-scanlines opacity-30" />
         
         <Suspense fallback={null}>
           <Scene3D className="z-0" />
         </Suspense>
 
-        {/* Side line accents */}
+        {/* Left sidebar */}
         <motion.div 
-          initial={{ opacity: 0, scaleY: 0 }} 
-          animate={{ opacity: 1, scaleY: 1 }} 
-          transition={{ delay: 1.8, duration: 1.2 }}
-          className="absolute left-8 top-1/2 -translate-y-1/2 z-10 hidden lg:flex flex-col items-center gap-6 origin-center"
+          initial={{ opacity: 0, x: -30 }} 
+          animate={{ opacity: 1, x: 0 }} 
+          transition={{ delay: 2, duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+          className="absolute left-6 md:left-10 top-0 bottom-0 z-10 hidden lg:flex flex-col items-center justify-between py-12"
         >
-          <div className="w-px h-24 bg-gradient-to-b from-transparent via-foreground/8 to-transparent" />
-          <span className="text-[7px] tracking-[0.35em] text-muted-foreground/25 uppercase font-mono [writing-mode:vertical-lr] rotate-180">
-            Portfolio — 2025
-          </span>
-          <div className="w-px h-24 bg-gradient-to-b from-transparent via-foreground/8 to-transparent" />
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-px h-16 bg-gradient-to-b from-transparent to-foreground/10" />
+            <span className="text-[7px] tracking-[0.4em] text-muted-foreground/30 uppercase font-mono [writing-mode:vertical-lr] rotate-180">Portfolio — 2025</span>
+          </div>
+          <div className="flex flex-col items-center gap-4">
+            {[
+              { Icon: Github, href: "https://github.com/sheliyazaid" },
+              { Icon: Linkedin, href: "https://www.linkedin.com/in/zaid-sheliya/" },
+              { Icon: Instagram, href: "https://www.instagram.com/zaxd._.shelxya/" },
+              { Icon: Mail, href: "mailto:zaidsheliya16@gmail.com" },
+            ].map(({ Icon, href }) => (
+              <MagneticButton key={href} onClick={() => window.open(href, "_blank")} className="text-muted-foreground/20 hover:text-foreground/70 transition-all duration-500">
+                <Icon size={13} />
+              </MagneticButton>
+            ))}
+          </div>
+          <div className="w-px h-16 bg-gradient-to-b from-foreground/10 to-transparent" />
         </motion.div>
 
+        {/* Right sidebar — coordinates */}
         <motion.div 
-          initial={{ opacity: 0, scaleY: 0 }} 
-          animate={{ opacity: 1, scaleY: 1 }} 
-          transition={{ delay: 2, duration: 1.2 }}
-          className="absolute right-8 top-1/2 -translate-y-1/2 z-10 hidden lg:flex flex-col items-center gap-5 origin-center"
+          initial={{ opacity: 0, x: 30 }} 
+          animate={{ opacity: 1, x: 0 }} 
+          transition={{ delay: 2.2, duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+          className="absolute right-6 md:right-10 top-0 bottom-0 z-10 hidden lg:flex flex-col items-center justify-between py-12"
         >
-          <div className="w-px h-20 bg-gradient-to-b from-transparent via-foreground/8 to-transparent" />
-          {[
-            { Icon: Github, href: "https://github.com/sheliyazaid" },
-            { Icon: Linkedin, href: "https://www.linkedin.com/in/zaid-sheliya/" },
-            { Icon: Instagram, href: "https://www.instagram.com/zaxd._.shelxya/" },
-            { Icon: Mail, href: "mailto:zaidsheliya16@gmail.com" },
-          ].map(({ Icon, href }) => (
-            <MagneticButton
-              key={href}
-              onClick={() => window.open(href, "_blank")}
-              className="text-muted-foreground/15 hover:text-foreground/60 transition-all duration-700"
-            >
-              <Icon size={13} />
-            </MagneticButton>
-          ))}
-          <div className="w-px h-20 bg-gradient-to-b from-transparent via-foreground/8 to-transparent" />
+          <div className="w-px h-16 bg-gradient-to-b from-transparent to-foreground/10" />
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-[7px] tracking-[0.3em] text-muted-foreground/20 font-mono [writing-mode:vertical-lr]">19.0760°N</span>
+            <div className="w-px h-4 bg-foreground/5" />
+            <span className="text-[7px] tracking-[0.3em] text-muted-foreground/20 font-mono [writing-mode:vertical-lr]">72.8777°E</span>
+          </div>
+          <div className="w-px h-16 bg-gradient-to-b from-foreground/10 to-transparent" />
         </motion.div>
+
+        {/* Corner frames */}
+        {[["top-8 left-8", "border-l border-t"], ["top-8 right-8", "border-r border-t"], ["bottom-8 left-8", "border-l border-b"], ["bottom-8 right-8", "border-r border-b"]].map(([pos, border]) => (
+          <motion.div key={pos} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.5, duration: 1 }} className={`absolute ${pos} z-10 hidden md:block`}>
+            <div className={`w-8 h-8 ${border} border-foreground/[0.07]`} />
+          </motion.div>
+        ))}
 
         {/* Main hero content */}
-        <motion.div
-          id="hero-content"
-          className="relative z-10 text-center px-6 will-change-transform max-w-7xl mx-auto perspective-section"
-          style={{ y: heroY, opacity: heroOpacity, scale: heroScale }}
-        >
+        <motion.div id="hero-content" className="relative z-10 text-center px-6 will-change-transform max-w-7xl mx-auto perspective-section" style={{ y: heroY, opacity: heroOpacity, scale: heroScale }}>
           <motion.div style={{ rotateX, rotateY }} className="depth-layer">
-            {/* Micro label */}
-            <motion.div
-              initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              transition={{ delay: 0.2, duration: 1, ease: [0.16, 1, 0.3, 1] }}
-              className="mb-8"
-            >
-              <div className="inline-flex items-center gap-3 rounded-full border border-border/20 bg-foreground/[0.02] backdrop-blur-sm px-5 py-2">
-                <span className="relative flex h-1.5 w-1.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400/75" />
-                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+            {/* Status badge */}
+            <motion.div initial={{ opacity: 0, y: 40, filter: "blur(12px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.3, duration: 1.2, ease: [0.16, 1, 0.3, 1] }} className="mb-10">
+              <div className="inline-flex items-center gap-3 rounded-full border border-foreground/[0.06] bg-foreground/[0.02] backdrop-blur-xl px-6 py-2.5">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400/60" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
                 </span>
-                <span className="text-[8px] tracking-[0.35em] text-muted-foreground/50 uppercase font-mono">
-                  Open to Opportunities
-                </span>
+                <span className="text-[9px] tracking-[0.4em] text-foreground/40 uppercase font-mono">Available for Hire</span>
               </div>
             </motion.div>
 
-            {/* THE NAME — dominant, clean */}
+            {/* THE NAME */}
             <div className="relative">
-              {/* Ghost watermark */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.6, duration: 2 }}
-                className="absolute inset-0 flex items-center justify-center pointer-events-none select-none"
-              >
-                <span className="font-heading text-[clamp(8rem,25vw,22rem)] font-extrabold leading-none text-foreground/[0.015] tracking-[-0.05em]">ZS</span>
+              <motion.div initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5, duration: 2.5, ease: [0.16, 1, 0.3, 1] }} className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
+                <span className="font-heading text-[clamp(10rem,30vw,28rem)] font-extrabold leading-none text-foreground/[0.012] tracking-[-0.06em]">ZS</span>
               </motion.div>
 
               <div className="overflow-hidden">
-                <motion.h1
-                  initial={{ y: "110%" }}
-                  animate={{ y: 0 }}
-                  transition={{ delay: 0.4, duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
-                  className="font-heading text-[clamp(3.5rem,12vw,11rem)] font-extrabold leading-[0.82] tracking-[-0.04em] hero-name-gradient"
-                >
+                <motion.h1 initial={{ y: "120%", skewY: 8 }} animate={{ y: 0, skewY: 0 }} transition={{ delay: 0.5, duration: 1.6, ease: [0.16, 1, 0.3, 1] }} className="font-heading text-[clamp(4rem,14vw,13rem)] font-extrabold leading-[0.8] tracking-[-0.05em] hero-name-gradient glitch-text" data-text="ZAID">
                   ZAID
                 </motion.h1>
               </div>
-              <div className="overflow-hidden mt-1">
-                <motion.h1
-                  initial={{ y: "110%" }}
-                  animate={{ y: 0 }}
-                  transition={{ delay: 0.55, duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
-                  className="font-heading text-[clamp(3.5rem,12vw,11rem)] font-extrabold leading-[0.82] tracking-[-0.04em] hero-name-gradient"
-                >
+              <div className="overflow-hidden mt-0">
+                <motion.h1 initial={{ y: "120%", skewY: -8 }} animate={{ y: 0, skewY: 0 }} transition={{ delay: 0.7, duration: 1.6, ease: [0.16, 1, 0.3, 1] }} className="font-heading text-[clamp(4rem,14vw,13rem)] font-extrabold leading-[0.8] tracking-[-0.05em] hero-name-gradient">
                   SHELIYA
                 </motion.h1>
               </div>
+
+              <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 1.2, duration: 1.8, ease: [0.16, 1, 0.3, 1] }} className="absolute top-1/2 left-0 right-0 h-px bg-gradient-to-r from-transparent via-foreground/[0.06] to-transparent origin-left pointer-events-none" />
             </div>
 
-            {/* Horizontal accent line */}
-            <motion.div
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ delay: 1, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-              className="mx-auto mt-8 h-px w-32 bg-gradient-to-r from-transparent via-foreground/15 to-transparent origin-center"
-            />
-
-            {/* Role typing */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.2, duration: 0.8 }}
-              className="mt-6"
-            >
-              <p className="text-sm md:text-base tracking-[0.25em] font-mono uppercase text-muted-foreground/50">
-                <span className="text-foreground/60">{typedText}</span>
-                <span className="animate-pulse text-foreground/25 ml-0.5">|</span>
+            {/* Role typing with lines */}
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.3, duration: 1 }} className="mt-8 flex items-center justify-center gap-4">
+              <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 1.5, duration: 0.8 }} className="hidden md:block h-px w-16 bg-gradient-to-r from-transparent to-foreground/15 origin-right" />
+              <p className="text-sm md:text-base tracking-[0.3em] font-mono uppercase text-muted-foreground/40">
+                <span className="text-foreground/50">{typedText}</span>
+                <span className="animate-pulse text-foreground/20 ml-0.5">_</span>
               </p>
+              <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 1.5, duration: 0.8 }} className="hidden md:block h-px w-16 bg-gradient-to-l from-transparent to-foreground/15 origin-left" />
             </motion.div>
 
             {/* Tagline */}
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.4, duration: 0.8 }}
-              className="mt-6 text-muted-foreground/35 text-sm md:text-base max-w-md mx-auto leading-relaxed"
-            >
-              I craft digital experiences where <span className="text-foreground/50">stunning design</span> meets <span className="text-foreground/50">clean code</span>.
+            <motion.p initial={{ opacity: 0, y: 25, filter: "blur(6px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 1.6, duration: 1 }} className="mt-5 text-muted-foreground/30 text-sm md:text-base max-w-lg mx-auto leading-relaxed">
+              I craft digital experiences where <span className="text-foreground/60 font-medium">stunning design</span> meets <span className="text-foreground/60 font-medium">clean code</span> — pixel-perfect, every time.
             </motion.p>
 
             {/* CTA buttons */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.6, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="mt-12 flex items-center justify-center gap-4 flex-wrap"
-            >
-              <MagneticButton
-                onClick={() => document.getElementById("portfolio")?.scrollIntoView({ behavior: "smooth" })}
-                className="group relative overflow-hidden rounded-full border border-foreground/10 bg-foreground/[0.03] backdrop-blur-sm px-10 py-3.5 text-[11px] font-medium tracking-[0.2em] uppercase text-foreground/80 transition-all duration-700 hover:border-foreground/20 hover:bg-foreground/[0.06]"
-              >
-                <span className="relative z-10 flex items-center gap-2.5">
-                  <Eye size={13} />
-                  View Work
-                </span>
+            <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.9, duration: 1, ease: [0.16, 1, 0.3, 1] }} className="mt-14 flex items-center justify-center gap-5 flex-wrap">
+              <MagneticButton onClick={() => document.getElementById("portfolio")?.scrollIntoView({ behavior: "smooth" })} className="group relative overflow-hidden rounded-full border border-foreground/10 bg-foreground/[0.04] backdrop-blur-xl px-12 py-4 text-[10px] font-semibold tracking-[0.25em] uppercase text-foreground/90 transition-all duration-700 hover:border-foreground/25 hover:bg-foreground/[0.08] hover:shadow-[0_0_40px_hsla(0,0%,100%,0.06)] cyber-btn">
+                <span className="relative z-10 flex items-center gap-3"><Eye size={14} /> View Work</span>
               </MagneticButton>
-              <MagneticButton
-                onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
-                className="rounded-full px-10 py-3.5 text-[11px] font-medium tracking-[0.2em] uppercase text-muted-foreground/40 transition-all duration-700 hover:text-foreground/60"
-              >
-                <span className="flex items-center gap-2.5">
-                  <Send size={13} />
-                  Contact
-                </span>
+              <MagneticButton onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })} className="group rounded-full border border-transparent hover:border-foreground/[0.06] px-12 py-4 text-[10px] font-semibold tracking-[0.25em] uppercase text-muted-foreground/35 transition-all duration-700 hover:text-foreground/60 hover:bg-foreground/[0.02]">
+                <span className="flex items-center gap-3"><Send size={14} /> Let's Talk</span>
               </MagneticButton>
             </motion.div>
 
             {/* Mobile social */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 2 }}
-              className="mt-10 flex items-center justify-center gap-5 lg:hidden"
-            >
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.3 }} className="mt-10 flex items-center justify-center gap-6 lg:hidden">
               {[
                 { Icon: Github, href: "https://github.com/sheliyazaid" },
                 { Icon: Linkedin, href: "https://www.linkedin.com/in/zaid-sheliya/" },
                 { Icon: Instagram, href: "https://www.instagram.com/zaxd._.shelxya/" },
                 { Icon: Mail, href: "mailto:zaidsheliya16@gmail.com" },
               ].map(({ Icon, href }) => (
-                <MagneticButton
-                  key={href}
-                  onClick={() => window.open(href, "_blank")}
-                  className="text-muted-foreground/25 hover:text-foreground/60 transition-all duration-500"
-                >
-                  <Icon size={15} />
+                <MagneticButton key={href} onClick={() => window.open(href, "_blank")} className="text-muted-foreground/25 hover:text-foreground/60 transition-all duration-500">
+                  <Icon size={16} />
                 </MagneticButton>
               ))}
             </motion.div>
           </motion.div>
         </motion.div>
 
-        {/* Bottom scroll indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 2.5 }}
-          className="absolute bottom-10 left-0 right-0 z-10"
-        >
-          <div className="flex flex-col items-center gap-3">
-            <motion.div animate={{ y: [0, 5, 0] }} transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}>
-              <ArrowDown size={11} className="text-muted-foreground/20" />
+        {/* Scroll indicator */}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.8 }} className="absolute bottom-6 left-0 right-0 z-10">
+          <div className="flex flex-col items-center gap-4">
+            <span className="text-[7px] tracking-[0.5em] text-muted-foreground/15 uppercase font-mono">Scroll to Explore</span>
+            <motion.div className="w-5 h-8 rounded-full border border-foreground/[0.08] flex justify-center pt-1.5">
+              <motion.div animate={{ y: [0, 8, 0], opacity: [0.5, 0, 0.5] }} transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }} className="w-0.5 h-2 rounded-full bg-foreground/20" />
             </motion.div>
           </div>
         </motion.div>
