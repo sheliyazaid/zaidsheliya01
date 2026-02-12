@@ -1,6 +1,6 @@
 import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
-import { ArrowDown, ExternalLink, Send, MessageCircle, Palette, Code, PenTool, Globe, Layout, Figma, Smartphone, Terminal, Github, Linkedin, Mail, Heart, ArrowUp, Instagram, Sparkles, Eye, Star } from "lucide-react";
+import { ArrowDown, ExternalLink, Send, MessageCircle, Palette, Code, PenTool, Globe, Layout, Figma, Smartphone, Terminal, Github, Linkedin, Mail, Heart, ArrowUp, Instagram, Sparkles, Eye, Star, Cpu, Database, Layers, Zap, Monitor, Box } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionHeading from "../components/SectionHeading";
@@ -49,6 +49,19 @@ const highlights = [
   { icon: Figma, label: "Figma" },
   { icon: Globe, label: "Web Dev" },
   { icon: Smartphone, label: "Responsive" },
+];
+
+const techStack = [
+  { icon: Code, name: "React" },
+  { icon: Terminal, name: "TypeScript" },
+  { icon: Layers, name: "Tailwind" },
+  { icon: Figma, name: "Figma" },
+  { icon: Database, name: "Node.js" },
+  { icon: Cpu, name: "Three.js" },
+  { icon: Monitor, name: "Next.js" },
+  { icon: Zap, name: "Framer" },
+  { icon: Box, name: "GSAP" },
+  { icon: Globe, name: "Vercel" },
 ];
 
 const projects = [
@@ -150,7 +163,35 @@ function Counter({ value, label }: { value: string; label: string }) {
   );
 }
 
-// ─── MARQUEE ────────────────────────────────────
+// ─── TECH STACK MARQUEE ────────────────────────────────────
+function TechStackMarquee() {
+  const items = techStack;
+  return (
+    <div className="overflow-hidden py-8 relative">
+      <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-background to-transparent z-10" />
+      <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-background to-transparent z-10" />
+      <motion.div
+        animate={{ x: ["0%", "-50%"] }}
+        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+        className="flex gap-8 whitespace-nowrap"
+      >
+        {[...items, ...items, ...items, ...items].map((item, i) => (
+          <div
+            key={i}
+            className="flex items-center gap-2.5 glass-holo rounded-full px-5 py-2.5 border border-border/20 group hover:border-foreground/15 transition-all duration-500"
+          >
+            <item.icon size={14} className="text-muted-foreground/40 group-hover:text-foreground/70 transition-colors duration-300" />
+            <span className="text-[10px] tracking-[0.15em] text-muted-foreground/50 uppercase font-mono group-hover:text-foreground/70 transition-colors duration-300">
+              {item.name}
+            </span>
+          </div>
+        ))}
+      </motion.div>
+    </div>
+  );
+}
+
+// ─── WORD MARQUEE ────────────────────────────────────
 function InfiniteMarquee() {
   const items = ["DESIGN", "✦", "DEVELOP", "✦", "CREATE", "✦", "INNOVATE", "✦", "INSPIRE", "✦"];
   return (
@@ -194,6 +235,43 @@ function SpotlightCard({ children, className = "" }: { children: React.ReactNode
     <div ref={ref} onMouseMove={handleMouse} className={`spotlight-card ${className}`}>
       {children}
     </div>
+  );
+}
+
+// ─── FLOATING CODE SNIPPET HUD ────────────────────
+function FloatingCodeSnippet({ code, position, delay }: { code: string; position: string; delay: number }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20, scale: 0.9 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ delay, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+      className={`absolute ${position} z-10 hidden lg:block pointer-events-none`}
+    >
+      <div className="glass-holo rounded-lg px-4 py-3 border border-border/20 code-float">
+        <div className="flex items-center gap-1.5 mb-2">
+          <div className="w-1.5 h-1.5 rounded-full bg-foreground/20" />
+          <div className="w-1.5 h-1.5 rounded-full bg-foreground/15" />
+          <div className="w-1.5 h-1.5 rounded-full bg-foreground/10" />
+        </div>
+        <pre className="text-[9px] font-mono text-muted-foreground/40 leading-relaxed">
+          <code>{code}</code>
+        </pre>
+      </div>
+    </motion.div>
+  );
+}
+
+// ─── HUD ELEMENT ────────────────────
+function HUDElement({ children, position, delay }: { children: React.ReactNode; position: string; delay: number }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+      className={`absolute ${position} z-10 hidden lg:block pointer-events-none`}
+    >
+      {children}
+    </motion.div>
   );
 }
 
@@ -320,13 +398,51 @@ const Index = () => {
         <div className="aurora-glow" />
         
         {/* Ambient glow orbs */}
-        <div className="orbital-glow w-[600px] h-[600px] bg-foreground/5 -top-48 -right-48" style={{ animation: "pulse-glow 6s ease-in-out infinite" }} />
-        <div className="orbital-glow w-[500px] h-[500px] bg-foreground/3 -bottom-32 -left-32" style={{ animation: "pulse-glow 8s ease-in-out 2s infinite" }} />
+        <div className="orbital-glow w-[700px] h-[700px] bg-foreground/5 -top-48 -right-48" style={{ animation: "pulse-glow 6s ease-in-out infinite" }} />
+        <div className="orbital-glow w-[600px] h-[600px] bg-foreground/3 -bottom-32 -left-32" style={{ animation: "pulse-glow 8s ease-in-out 2s infinite" }} />
+        <div className="orbital-glow w-[400px] h-[400px] bg-foreground/3 top-1/3 left-1/4" style={{ animation: "pulse-glow 10s ease-in-out 4s infinite" }} />
         <div className="lens-flare top-1/4 right-1/4" />
+        
+        {/* Scanlines overlay */}
+        <div className="absolute inset-0 z-[1] pointer-events-none hero-scanlines" />
         
         <Suspense fallback={null}>
           <Scene3D className="z-0" />
         </Suspense>
+
+        {/* Floating code snippets */}
+        <FloatingCodeSnippet
+          code={`const design = () => {\n  return <Art />;\n};`}
+          position="top-[18%] left-[8%]"
+          delay={2.2}
+        />
+        <FloatingCodeSnippet
+          code={`interface Portfolio {\n  creativity: ∞\n  code: "clean"\n}`}
+          position="bottom-[22%] right-[6%]"
+          delay={2.6}
+        />
+
+        {/* HUD elements */}
+        <HUDElement position="top-[15%] right-[10%]" delay={2.4}>
+          <div className="hud-box rounded-lg px-3 py-2">
+            <div className="text-[7px] font-mono text-muted-foreground/30 tracking-[0.3em] uppercase">System</div>
+            <div className="text-[9px] font-mono text-foreground/25 mt-1">STATUS: <span className="text-emerald-500/60">ONLINE</span></div>
+          </div>
+        </HUDElement>
+        <HUDElement position="bottom-[25%] left-[5%]" delay={2.8}>
+          <div className="hud-box rounded-lg px-3 py-2">
+            <div className="text-[7px] font-mono text-muted-foreground/30 tracking-[0.3em] uppercase">FPS</div>
+            <div className="text-[9px] font-mono text-foreground/25 mt-1">60 <span className="text-muted-foreground/20">/ 60</span></div>
+          </div>
+        </HUDElement>
+
+        {/* Crosshair center mark */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[2] pointer-events-none hidden lg:block">
+          <div className="w-px h-6 bg-foreground/[0.04] absolute -top-8 left-1/2" />
+          <div className="w-px h-6 bg-foreground/[0.04] absolute top-2 left-1/2" />
+          <div className="h-px w-6 bg-foreground/[0.04] absolute top-1/2 -left-8" />
+          <div className="h-px w-6 bg-foreground/[0.04] absolute top-1/2 left-2" />
+        </div>
 
         {/* Side decorators */}
         <motion.div 
@@ -444,7 +560,7 @@ const Index = () => {
             >
               <MagneticButton
                 onClick={() => document.getElementById("portfolio")?.scrollIntoView({ behavior: "smooth" })}
-                className="group relative overflow-hidden glass-holo animated-gradient-border rounded-full px-12 py-4 text-sm font-medium tracking-[0.15em] uppercase text-foreground transition-all duration-500 hover:glow-md"
+                className="group relative overflow-hidden glass-holo animated-gradient-border rounded-full px-12 py-4 text-sm font-medium tracking-[0.15em] uppercase text-foreground transition-all duration-500 hover:glow-md cyber-btn"
               >
                 <span className="relative z-10 flex items-center gap-2.5">
                   <Eye size={15} />
@@ -522,6 +638,9 @@ const Index = () => {
           </div>
         </motion.div>
       </section>
+
+      {/* ═══════════ TECH STACK MARQUEE ═══════════ */}
+      <TechStackMarquee />
 
       {/* ═══════════ MARQUEE ═══════════ */}
       <InfiniteMarquee />
@@ -870,7 +989,7 @@ const Index = () => {
                   </div>
                   <MagneticButton
                     type="submit"
-                    className="w-full glass-holo animated-gradient-border rounded-xl py-4 text-sm font-medium tracking-[0.15em] uppercase text-foreground flex items-center justify-center gap-3 hover:glow-md transition-all duration-500"
+                    className="w-full glass-holo animated-gradient-border rounded-xl py-4 text-sm font-medium tracking-[0.15em] uppercase text-foreground flex items-center justify-center gap-3 hover:glow-md transition-all duration-500 cyber-btn"
                   >
                     <Send size={13} />
                     Send via WhatsApp
