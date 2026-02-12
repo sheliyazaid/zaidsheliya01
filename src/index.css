@@ -227,13 +227,13 @@
     background-image: linear-gradient(
       100deg,
       hsl(0 0% 100%) 0%,
-      hsl(40 40% 75%) 25%,
-      hsl(0 0% 90%) 45%,
-      hsl(35 50% 68%) 65%,
-      hsl(0 0% 85%) 80%,
-      hsl(40 35% 70%) 100%
+      hsl(0 0% 80%) 25%,
+      hsl(0 0% 95%) 45%,
+      hsl(0 0% 70%) 65%,
+      hsl(0 0% 90%) 80%,
+      hsl(0 0% 75%) 100%
     );
-    filter: brightness(1.1);
+    filter: brightness(1.05);
   }
 
   .text-stroke {
@@ -474,12 +474,12 @@
     pointer-events: none;
   }
   .glitch-text::before {
-    color: hsla(40 70% 50% / 0.3);
+    color: hsla(0 0% 70% / 0.3);
     animation: glitch-shift 8s ease-in-out infinite;
     clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
   }
   .glitch-text::after {
-    color: hsla(200 70% 50% / 0.2);
+    color: hsla(0 0% 60% / 0.2);
     animation: glitch-shift 8s ease-in-out 0.5s infinite reverse;
     clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
   }
