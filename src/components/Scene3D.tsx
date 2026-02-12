@@ -3,7 +3,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Float, Stars } from "@react-three/drei";
 import * as THREE from "three";
 
-// ─── SMOOTH MOUSE CAMERA ───
+// Mouse-reactive camera
 function MouseCamera() {
   const { camera } = useThree();
   const mouse = useRef({ x: 0, y: 0 });
@@ -19,16 +19,150 @@ function MouseCamera() {
   }, [handleMouseMove]);
 
   useFrame(() => {
-    camera.position.x += (mouse.current.x * 1.5 - camera.position.x) * 0.015;
-    camera.position.y += (-mouse.current.y * 1 - camera.position.y) * 0.015;
+    camera.position.x += (mouse.current.x * 2 - camera.position.x) * 0.015;
+    camera.position.y += (-mouse.current.y * 1.5 - camera.position.y) * 0.015;
     camera.lookAt(0, 0, 0);
   });
 
   return null;
 }
 
-// ─── MORPHING WIREFRAME SPHERE — hero centerpiece ───
-function HeroSphere() {
+// Code bracket < > — developer signature
+function CodeBracket({ position, scale = 1, speed = 0.1 }: { position: [number, number, number]; scale?: number; speed?: number }) {
+  const ref = useRef<THREE.Group>(null);
+
+  const bracketShape = useMemo(() => {
+    const shape = new THREE.BufferGeometry();
+    const vertices = new Float32Array([
+      // Left bracket <
+      0.3, 0.5, 0,
+      0, 0, 0,
+      0, 0, 0,
+      0.3, -0.5, 0,
+    ]);
+    shape.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
+    return shape;
+  }, []);
+
+  useFrame((state) => {
+    if (ref.current) {
+      ref.current.rotation.y = Math.sin(state.clock.elapsedTime * speed) * 0.3;
+      ref.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.5) * 0.2;
+    }
+  });
+
+  return (
+    <group ref={ref} position={position} scale={scale}>
+      <lineSegments geometry={bracketShape}>
+        <lineBasicMaterial color="#ffd700" transparent opacity={0.25} />
+      </lineSegments>
+    </group>
+  );
+}
+
+// Floating wireframe cubes — data blocks
+function DataCube({ position, size = 0.4, speed = 0.2 }: { position: [number, number, number]; size?: number; speed?: number }) {
+  const ref = useRef<THREE.Mesh>(null);
+
+  useFrame((state) => {
+    if (ref.current) {
+      ref.current.rotation.x = state.clock.elapsedTime * speed;
+      ref.current.rotation.z = state.clock.elapsedTime * speed * 0.7;
+    }
+  });
+
+  return (
+    <Float speed={1.2} rotationIntensity={0.2} floatIntensity={0.6}>
+      <mesh ref={ref} position={position}>
+        <boxGeometry args={[size, size, size]} />
+        <meshStandardMaterial color="#ffd700" wireframe transparent opacity={0.08} />
+      </mesh>
+    </Float>
+  );
+}
+
+// Circuit lines — techy grid connections
+function CircuitLines() {
+  const ref = useRef<THREE.Group>(null);
+
+  const lines = useMemo(() => {
+    const segments: { start: [number, number, number]; end: [number, number, number] }[] = [];
+    // Horizontal lines
+    for (let i = 0; i < 8; i++) {
+      const y = (Math.random() - 0.5) * 12;
+      const z = -5 - Math.random() * 8;
+      const x1 = (Math.random() - 0.5) * 16;
+      const x2 = x1 + 2 + Math.random() * 4;
+      segments.push({ start: [x1, y, z], end: [x2, y, z] });
+      // Add a vertical connector
+      if (Math.random() > 0.5) {
+        const vy = y + (Math.random() - 0.5) * 2;
+        segments.push({ start: [x2, y, z], end: [x2, vy, z] });
+      }
+    }
+    // Vertical lines
+    for (let i = 0; i < 6; i++) {
+      const x = (Math.random() - 0.5) * 14;
+      const z = -5 - Math.random() * 8;
+      const y1 = (Math.random() - 0.5) * 10;
+      const y2 = y1 + 1 + Math.random() * 3;
+      segments.push({ start: [x, y1, z], end: [x, y2, z] });
+    }
+    return segments;
+  }, []);
+
+  useFrame((state) => {
+    if (ref.current) {
+      ref.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.05) * 0.1;
+    }
+  });
+
+  return (
+    <group ref={ref}>
+      {lines.map((line, i) => {
+        const geo = new THREE.BufferGeometry().setFromPoints([
+          new THREE.Vector3(...line.start),
+          new THREE.Vector3(...line.end),
+        ]);
+        return (
+          <lineSegments key={i} geometry={geo}>
+            <lineBasicMaterial color="#ffd700" transparent opacity={0.06} />
+          </lineSegments>
+        );
+      })}
+      {/* Circuit nodes (dots at intersections) */}
+      {lines.map((line, i) => (
+        <mesh key={`node-${i}`} position={line.end}>
+          <sphereGeometry args={[0.03, 6, 6]} />
+          <meshBasicMaterial color="#ffd700" transparent opacity={0.15} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+// Terminal cursor blink — floating element
+function TerminalCursor({ position }: { position: [number, number, number] }) {
+  const ref = useRef<THREE.Mesh>(null);
+
+  useFrame((state) => {
+    if (ref.current && !Array.isArray(ref.current.material)) {
+      (ref.current.material as THREE.MeshBasicMaterial).opacity = Math.sin(state.clock.elapsedTime * 3) > 0 ? 0.3 : 0;
+    }
+  });
+
+  return (
+    <Float speed={0.5} floatIntensity={0.3}>
+      <mesh ref={ref} position={position}>
+        <planeGeometry args={[0.08, 0.5]} />
+        <meshBasicMaterial color="#ffd700" transparent opacity={0.3} />
+      </mesh>
+    </Float>
+  );
+}
+
+// Central morphing sphere — kept but more techy
+function CentralSphere() {
   const meshRef = useRef<THREE.Mesh>(null);
   const geoRef = useRef<THREE.IcosahedronGeometry>(null);
   const originalPositions = useRef<Float32Array | null>(null);
@@ -47,167 +181,60 @@ function HeroSphere() {
         const oy = orig[i * 3 + 1];
         const oz = orig[i * 3 + 2];
         const noise =
-          Math.sin(ox * 2.5 + time * 0.5) *
-          Math.cos(oy * 2.5 + time * 0.35) *
-          Math.sin(oz * 2.5 + time * 0.25) * 0.2;
+          Math.sin(ox * 3 + time * 0.6) *
+          Math.cos(oy * 3 + time * 0.4) *
+          Math.sin(oz * 3 + time * 0.3) * 0.15;
         positions.setXYZ(i, ox + ox * noise, oy + oy * noise, oz + oz * noise);
       }
       positions.needsUpdate = true;
       geoRef.current.computeVertexNormals();
-      meshRef.current.rotation.y = time * 0.04;
-      meshRef.current.rotation.x = Math.sin(time * 0.02) * 0.1;
+      meshRef.current.rotation.y = time * 0.06;
     }
   });
 
   return (
-    <Float speed={0.3} rotationIntensity={0.05} floatIntensity={0.15}>
+    <Float speed={0.6} rotationIntensity={0.1} floatIntensity={0.3}>
       <mesh ref={meshRef}>
-        <icosahedronGeometry ref={geoRef} args={[2.8, 6]} />
-        <meshStandardMaterial
-          color="#ffffff"
-          wireframe
-          transparent
-          opacity={0.045}
-          emissive="#ffffff"
-          emissiveIntensity={0.03}
-        />
+        <icosahedronGeometry ref={geoRef} args={[1.8, 4]} />
+        <meshStandardMaterial color="#ffd700" wireframe transparent opacity={0.04} />
       </mesh>
     </Float>
   );
 }
 
-// ─── ROTATING TORUS KNOT — sleek mathematical shape ───
-function GlassTorusKnot() {
-  const ref = useRef<THREE.Mesh>(null);
+// Floating particles
+function Particles() {
+  const count = 300;
+  const positions = useMemo(() => {
+    const pos = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
+      pos[i * 3] = (Math.random() - 0.5) * 30;
+      pos[i * 3 + 1] = (Math.random() - 0.5) * 30;
+      pos[i * 3 + 2] = (Math.random() - 0.5) * 30;
+    }
+    return pos;
+  }, []);
+
+  const ref = useRef<THREE.Points>(null);
 
   useFrame((state) => {
     if (ref.current) {
-      ref.current.rotation.x = state.clock.elapsedTime * 0.08;
-      ref.current.rotation.y = state.clock.elapsedTime * 0.12;
+      ref.current.rotation.y = state.clock.elapsedTime * 0.012;
     }
   });
 
   return (
-    <Float speed={0.4} rotationIntensity={0.1} floatIntensity={0.3}>
-      <mesh ref={ref} position={[4.5, 1.5, -3]} scale={0.6}>
-        <torusKnotGeometry args={[1, 0.3, 128, 16, 2, 3]} />
-        <meshStandardMaterial
-          color="#ffffff"
-          wireframe
-          transparent
-          opacity={0.04}
-          emissive="#ffffff"
-          emissiveIntensity={0.02}
-        />
-      </mesh>
-    </Float>
+    <points ref={ref}>
+      <bufferGeometry>
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} count={count} itemSize={3} />
+      </bufferGeometry>
+      <pointsMaterial size={0.015} color="#ffd700" transparent opacity={0.3} sizeAttenuation />
+    </points>
   );
 }
 
-// ─── HOLOGRAPHIC CUBE — rotating data cube ───
-function HoloCube() {
-  const groupRef = useRef<THREE.Group>(null);
-  const innerRef = useRef<THREE.Mesh>(null);
-
-  useFrame((state) => {
-    const t = state.clock.elapsedTime;
-    if (groupRef.current) {
-      groupRef.current.rotation.y = t * 0.15;
-      groupRef.current.rotation.x = Math.sin(t * 0.1) * 0.3;
-    }
-    if (innerRef.current) {
-      innerRef.current.rotation.y = -t * 0.3;
-      innerRef.current.rotation.z = t * 0.2;
-    }
-  });
-
-  return (
-    <Float speed={0.5} rotationIntensity={0.08} floatIntensity={0.25}>
-      <group ref={groupRef} position={[-4.5, -1, -4]}>
-        {/* Outer wireframe cube */}
-        <mesh>
-          <boxGeometry args={[1.4, 1.4, 1.4]} />
-          <meshStandardMaterial color="#ffffff" wireframe transparent opacity={0.05} emissive="#ffffff" emissiveIntensity={0.02} />
-        </mesh>
-        {/* Inner rotated cube */}
-        <mesh ref={innerRef} scale={0.7}>
-          <boxGeometry args={[1.4, 1.4, 1.4]} />
-          <meshStandardMaterial color="#ffffff" wireframe transparent opacity={0.035} emissive="#ffffff" emissiveIntensity={0.015} />
-        </mesh>
-        {/* Corner dots */}
-        {[[-1, -1, -1], [1, -1, -1], [-1, 1, -1], [1, 1, -1], [-1, -1, 1], [1, -1, 1], [-1, 1, 1], [1, 1, 1]].map((pos, i) => (
-          <mesh key={i} position={[pos[0] * 0.7, pos[1] * 0.7, pos[2] * 0.7]}>
-            <sphereGeometry args={[0.03, 8, 8]} />
-            <meshBasicMaterial color="#ffffff" transparent opacity={0.15} />
-          </mesh>
-        ))}
-      </group>
-    </Float>
-  );
-}
-
-// ─── CODE BRACKETS — developer identity ───
-function CodeBracket({ position, type = "open", scale = 1 }: { position: [number, number, number]; type?: "open" | "close"; scale?: number }) {
-  const ref = useRef<THREE.Group>(null);
-
-  const points = useMemo(() => {
-    const pts: THREE.Vector3[] = [];
-    if (type === "open") {
-      pts.push(new THREE.Vector3(0.3, 0.8, 0));
-      pts.push(new THREE.Vector3(-0.1, 0.4, 0));
-      pts.push(new THREE.Vector3(-0.2, 0, 0));
-      pts.push(new THREE.Vector3(-0.1, -0.4, 0));
-      pts.push(new THREE.Vector3(0.3, -0.8, 0));
-    } else {
-      pts.push(new THREE.Vector3(-0.3, 0.8, 0));
-      pts.push(new THREE.Vector3(0.1, 0.4, 0));
-      pts.push(new THREE.Vector3(0.2, 0, 0));
-      pts.push(new THREE.Vector3(0.1, -0.4, 0));
-      pts.push(new THREE.Vector3(-0.3, -0.8, 0));
-    }
-    return new THREE.BufferGeometry().setFromPoints(pts);
-  }, [type]);
-
-  useFrame((state) => {
-    if (ref.current) {
-      ref.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.15) * 0.3;
-    }
-  });
-
-  return (
-    <Float speed={0.6} rotationIntensity={0.05} floatIntensity={0.3}>
-      <group ref={ref} position={position} scale={scale}>
-        <lineSegments geometry={points}>
-          <lineBasicMaterial color="#ffffff" transparent opacity={0.08} />
-        </lineSegments>
-      </group>
-    </Float>
-  );
-}
-
-// ─── FLOATING PYRAMID — geometric accent ───
-function FloatingPyramid({ position, scale = 0.5, speed = 0.1 }: { position: [number, number, number]; scale?: number; speed?: number }) {
-  const ref = useRef<THREE.Mesh>(null);
-
-  useFrame((state) => {
-    if (ref.current) {
-      ref.current.rotation.y = state.clock.elapsedTime * speed;
-      ref.current.rotation.x = Math.sin(state.clock.elapsedTime * speed * 0.7) * 0.5;
-    }
-  });
-
-  return (
-    <Float speed={0.5} rotationIntensity={0.1} floatIntensity={0.35}>
-      <mesh ref={ref} position={position} scale={scale}>
-        <tetrahedronGeometry args={[1, 0]} />
-        <meshStandardMaterial color="#ffffff" wireframe transparent opacity={0.05} emissive="#ffffff" emissiveIntensity={0.02} />
-      </mesh>
-    </Float>
-  );
-}
-
-// ─── ORBIT RINGS ───
-function OrbitRing({ radius, speed, tilt, opacity }: { radius: number; speed: number; tilt: number; opacity: number }) {
+// Orbit rings
+function OrbitRing({ radius = 3, speed = 0.3, tilt = 0, opacity = 0.1 }: { radius?: number; speed?: number; tilt?: number; opacity?: number }) {
   const ref = useRef<THREE.Mesh>(null);
 
   useFrame((state) => {
@@ -219,174 +246,76 @@ function OrbitRing({ radius, speed, tilt, opacity }: { radius: number; speed: nu
 
   return (
     <mesh ref={ref}>
-      <torusGeometry args={[radius, 0.003, 16, 256]} />
-      <meshBasicMaterial color="#ffffff" transparent opacity={opacity} />
+      <torusGeometry args={[radius, 0.004, 16, 128]} />
+      <meshBasicMaterial color="#ffd700" transparent opacity={opacity} />
     </mesh>
   );
 }
 
-// ─── PARTICLES ───
-function Particles() {
-  const count = 400;
-  const positions = useMemo(() => {
-    const pos = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 40;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 40;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 40;
-    }
-    return pos;
-  }, []);
-
-  const ref = useRef<THREE.Points>(null);
-
-  useFrame((state) => {
-    if (ref.current) {
-      ref.current.rotation.y = state.clock.elapsedTime * 0.008;
-    }
-  });
-
-  return (
-    <points ref={ref}>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" args={[positions, 3]} count={count} itemSize={3} />
-      </bufferGeometry>
-      <pointsMaterial size={0.015} color="#ffffff" transparent opacity={0.35} sizeAttenuation />
-    </points>
-  );
-}
-
-// ─── GRID FLOOR ───
-function GridFloor() {
-  return (
-    <group position={[0, -3.5, 0]}>
-      <gridHelper args={[40, 60, "#ffffff", "#ffffff"]} material-transparent material-opacity={0.018} />
-    </group>
-  );
-}
-
-// ─── CONNECTION LINES ───
-function ConnectionLines() {
+// Binary rain columns
+function BinaryRain() {
   const ref = useRef<THREE.Group>(null);
-
-  const lines = useMemo(() => {
-    const segments: { start: THREE.Vector3; end: THREE.Vector3 }[] = [];
-    for (let i = 0; i < 10; i++) {
-      const y = (Math.random() - 0.5) * 12;
-      const z = -4 - Math.random() * 8;
-      const x1 = (Math.random() - 0.5) * 18;
-      const x2 = x1 + 1.5 + Math.random() * 4;
-      segments.push({ start: new THREE.Vector3(x1, y, z), end: new THREE.Vector3(x2, y, z) });
+  
+  const dots = useMemo(() => {
+    const items: [number, number, number][] = [];
+    for (let col = 0; col < 6; col++) {
+      const x = (col - 3) * 2.5 + (Math.random() - 0.5);
+      const z = -8 - Math.random() * 5;
+      for (let row = 0; row < 8; row++) {
+        if (Math.random() > 0.4) {
+          items.push([x, row * 0.6 - 2, z]);
+        }
+      }
     }
-    return segments;
+    return items;
   }, []);
 
   useFrame((state) => {
     if (ref.current) {
-      ref.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.03) * 0.08;
+      ref.current.children.forEach((child, i) => {
+        const mesh = child as THREE.Mesh;
+        if (mesh.material && !Array.isArray(mesh.material)) {
+          (mesh.material as THREE.MeshBasicMaterial).opacity = Math.sin(state.clock.elapsedTime * 2 + i * 0.5) * 0.1 + 0.08;
+        }
+      });
     }
   });
 
   return (
     <group ref={ref}>
-      {lines.map((line, i) => {
-        const geo = new THREE.BufferGeometry().setFromPoints([line.start, line.end]);
-        return (
-          <lineSegments key={i} geometry={geo}>
-            <lineBasicMaterial color="#ffffff" transparent opacity={0.025} />
-          </lineSegments>
-        );
-      })}
-      {lines.map((line, i) => (
-        <mesh key={`n-${i}`} position={[line.end.x, line.end.y, line.end.z]}>
-          <sphereGeometry args={[0.02, 6, 6]} />
-          <meshBasicMaterial color="#ffffff" transparent opacity={0.08} />
+      {dots.map((pos, i) => (
+        <mesh key={i} position={pos}>
+          <planeGeometry args={[0.06, 0.06]} />
+          <meshBasicMaterial color="#ffd700" transparent opacity={0.1} />
         </mesh>
       ))}
     </group>
   );
 }
 
-// ─── DNA HELIX — subtle tech spiral ───
-function DataSpiral() {
-  const ref = useRef<THREE.Group>(null);
-  const count = 40;
-
-  const nodes = useMemo(() => {
-    const arr: { a: THREE.Vector3; b: THREE.Vector3 }[] = [];
-    for (let i = 0; i < count; i++) {
-      const t = (i / count) * Math.PI * 4;
-      const y = (i / count) * 6 - 3;
-      arr.push({
-        a: new THREE.Vector3(Math.cos(t) * 0.6, y, Math.sin(t) * 0.6),
-        b: new THREE.Vector3(Math.cos(t + Math.PI) * 0.6, y, Math.sin(t + Math.PI) * 0.6),
-      });
-    }
-    return arr;
-  }, []);
-
-  useFrame((state) => {
-    if (ref.current) {
-      ref.current.rotation.y = state.clock.elapsedTime * 0.1;
-    }
-  });
-
-  return (
-    <Float speed={0.3} rotationIntensity={0.05} floatIntensity={0.2}>
-      <group ref={ref} position={[5.5, 0, -5]} scale={0.8}>
-        {nodes.map((node, i) => (
-          <group key={i}>
-            <mesh position={[node.a.x, node.a.y, node.a.z]}>
-              <sphereGeometry args={[0.025, 6, 6]} />
-              <meshBasicMaterial color="#ffffff" transparent opacity={0.1} />
-            </mesh>
-            <mesh position={[node.b.x, node.b.y, node.b.z]}>
-              <sphereGeometry args={[0.025, 6, 6]} />
-              <meshBasicMaterial color="#ffffff" transparent opacity={0.1} />
-            </mesh>
-            {i % 4 === 0 && (
-              <lineSegments geometry={new THREE.BufferGeometry().setFromPoints([node.a, node.b])}>
-                <lineBasicMaterial color="#ffffff" transparent opacity={0.03} />
-              </lineSegments>
-            )}
-          </group>
-        ))}
-      </group>
-    </Float>
-  );
-}
-
-// ─── MAIN EXPORT ───
 export default function Scene3D({ className = "" }: { className?: string }) {
   return (
     <div className={`absolute inset-0 ${className}`}>
-      <Canvas camera={{ position: [0, 0, 7], fov: 50 }}>
+      <Canvas camera={{ position: [0, 0, 7], fov: 55 }}>
         <MouseCamera />
-        <ambientLight intensity={0.08} />
-        <pointLight position={[8, 8, 8]} intensity={0.15} />
-        <pointLight position={[-8, -8, -5]} intensity={0.06} color="#ffffff" />
-        <Stars radius={100} depth={80} count={1800} factor={1.5} saturation={0} fade speed={0.15} />
-        
+        <ambientLight intensity={0.15} />
+        <pointLight position={[10, 10, 10]} intensity={0.3} />
+        <pointLight position={[-10, -10, -5]} intensity={0.1} color="#ffd700" />
+        <Stars radius={60} depth={60} count={1500} factor={1.5} saturation={0} fade speed={0.3} />
         <Particles />
-        <HeroSphere />
-        <GridFloor />
-        <ConnectionLines />
-        
-        {/* 3D Objects */}
-        <GlassTorusKnot />
-        <HoloCube />
-        <DataSpiral />
-        <FloatingPyramid position={[-3, 2.5, -3]} scale={0.4} speed={0.12} />
-        <FloatingPyramid position={[3, -2, -5]} scale={0.3} speed={0.08} />
-        
-        {/* Code brackets */}
-        <CodeBracket position={[-6, 1, -4]} type="open" scale={1.2} />
-        <CodeBracket position={[6, -0.5, -4]} type="close" scale={1} />
-        
-        {/* Orbit rings */}
-        <OrbitRing radius={3.5} speed={0.06} tilt={0.6} opacity={0.04} />
-        <OrbitRing radius={5} speed={-0.04} tilt={-0.4} opacity={0.025} />
-        <OrbitRing radius={6.5} speed={0.03} tilt={0.3} opacity={0.015} />
+        <CentralSphere />
+        <CircuitLines />
+        <BinaryRain />
+        <CodeBracket position={[-3.5, 1.5, -2]} scale={1.5} speed={0.15} />
+        <CodeBracket position={[3.5, -1, -3]} scale={1.2} speed={0.1} />
+        <TerminalCursor position={[4, 2.5, -2]} />
+        <TerminalCursor position={[-2, -2, -3]} />
+        <DataCube position={[4, 2, -4]} size={0.6} speed={0.08} />
+        <DataCube position={[-4, -1.5, -3]} size={0.4} speed={0.12} />
+        <DataCube position={[2, -3, -5]} size={0.35} speed={0.15} />
+        <DataCube position={[-1.5, 3, -6]} size={0.5} speed={0.1} />
+        <OrbitRing radius={2.8} speed={0.12} tilt={0.5} opacity={0.04} />
+        <OrbitRing radius={4} speed={-0.08} tilt={-0.3} opacity={0.03} />
       </Canvas>
     </div>
   );

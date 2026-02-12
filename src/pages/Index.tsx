@@ -1,6 +1,6 @@
 import { Suspense, lazy, useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
-import { ExternalLink, Send, MessageCircle, Palette, Code, PenTool, Globe, Layout, Figma, Smartphone, Terminal, Github, Linkedin, Mail, Heart, ArrowUp, Instagram, Eye, Star } from "lucide-react";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { ArrowDown, ExternalLink, Send, MessageCircle, Palette, Code, PenTool, Globe, Layout, Figma, Smartphone, Terminal, Github, Linkedin, Mail, Heart, ArrowUp, Instagram, Sparkles, Eye, Star } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionHeading from "../components/SectionHeading";
@@ -9,6 +9,7 @@ import MagneticButton from "../components/MagneticButton";
 import ScrollProgress from "../components/ScrollProgress";
 import CursorFollower from "../components/CursorFollower";
 
+// Project images
 import imgBrand from "@/assets/project-brand.jpg";
 import imgSocial from "@/assets/project-social.jpg";
 import imgEditorial from "@/assets/project-editorial.jpg";
@@ -87,27 +88,6 @@ const testimonials = [
 
 const categories = ["All", "Graphic Design", "Frontend"];
 
-// ─── 3D MOUSE TRACKING ────────────────────
-function use3DMouse() {
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const smoothX = useSpring(mouseX, { stiffness: 50, damping: 20 });
-  const smoothY = useSpring(mouseY, { stiffness: 50, damping: 20 });
-
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      const x = (e.clientX / window.innerWidth - 0.5) * 2;
-      const y = (e.clientY / window.innerHeight - 0.5) * 2;
-      mouseX.set(x);
-      mouseY.set(y);
-    };
-    window.addEventListener("mousemove", handler, { passive: true });
-    return () => window.removeEventListener("mousemove", handler);
-  }, [mouseX, mouseY]);
-
-  return { smoothX, smoothY };
-}
-
 // ─── SKILL BAR ────────────────────────────────────
 function SkillBar({ name, level, delay }: { name: string; level: number; delay: number }) {
   return (
@@ -154,7 +134,7 @@ function Counter({ value, label }: { value: string; label: string }) {
 function InfiniteMarquee() {
   const items = ["DESIGN", "✦", "DEVELOP", "✦", "CREATE", "✦", "INNOVATE", "✦", "INSPIRE", "✦"];
   return (
-    <div className="overflow-hidden py-10 border-y border-border/20 relative">
+    <div className="overflow-hidden py-10 border-y border-border/30 relative">
       <div className="absolute inset-y-0 left-0 w-40 bg-gradient-to-r from-background to-transparent z-10" />
       <div className="absolute inset-y-0 right-0 w-40 bg-gradient-to-l from-background to-transparent z-10" />
       <motion.div
@@ -165,34 +145,14 @@ function InfiniteMarquee() {
         {[...items, ...items, ...items, ...items].map((item, i) => (
           <span
             key={i}
-            className={`font-heading font-extrabold tracking-[0.05em] select-none ${
-              item === "✦" ? "text-foreground/[0.06] text-xl" : "text-foreground/[0.03] text-5xl md:text-7xl"
+            className={`font-heading font-extrabold tracking-[0.05em] ${
+              item === "✦" ? "text-foreground/[0.08] text-xl" : "text-foreground/[0.04] text-5xl md:text-7xl"
             }`}
           >
             {item}
           </span>
         ))}
       </motion.div>
-    </div>
-  );
-}
-
-// ─── SPOTLIGHT CARD ────────────────────
-function SpotlightCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  const ref = useRef<HTMLDivElement>(null);
-
-  const handleMouse = (e: React.MouseEvent) => {
-    if (!ref.current) return;
-    const rect = ref.current.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    ref.current.style.setProperty("--mouse-x", `${x}%`);
-    ref.current.style.setProperty("--mouse-y", `${y}%`);
-  };
-
-  return (
-    <div ref={ref} onMouseMove={handleMouse} className={`spotlight-card ${className}`}>
-      {children}
     </div>
   );
 }
@@ -205,7 +165,6 @@ const Index = () => {
   const [activeFilter, setActiveFilter] = useState("All");
   const [form, setForm] = useState({ name: "", phone: "", message: "" });
   const [showTop, setShowTop] = useState(false);
-  const { smoothX, smoothY } = use3DMouse();
   
   // Typing animation
   const roles = ["Graphic Designer", "Frontend Developer", "UI/UX Designer", "Creative Thinker", "Brand Strategist"];
@@ -242,15 +201,11 @@ const Index = () => {
 
   // Parallax
   const { scrollY } = useScroll();
-  const heroY = useTransform(scrollY, [0, 800], [0, 350]);
+  const heroY = useTransform(scrollY, [0, 800], [0, 400]);
   const heroOpacity = useTransform(scrollY, [0, 500], [1, 0]);
-  const heroScale = useTransform(scrollY, [0, 800], [1, 0.8]);
+  const heroScale = useTransform(scrollY, [0, 800], [1, 0.75]);
   const aboutScale = useTransform(scrollY, [200, 900], [0.9, 1]);
   const aboutY = useTransform(scrollY, [200, 900], [150, 0]);
-
-  // 3D rotations driven by mouse
-  const rotateX = useTransform(smoothY, [-1, 1], [2, -2]);
-  const rotateY = useTransform(smoothX, [-1, 1], [-2, 2]);
 
   useEffect(() => {
     const onScroll = () => setShowTop(window.scrollY > 600);
@@ -314,153 +269,217 @@ const Index = () => {
         <ParticleBackground />
       </Suspense>
 
-      {/* ══════════════════ HERO ══════════════════ */}
+      {/* ══════════════════════════════════════════════════════════
+          ██╗  ██╗███████╗██████╗  ██████╗ 
+          ██║  ██║██╔════╝██╔══██╗██╔═══██╗
+          ███████║█████╗  ██████╔╝██║   ██║
+          ██╔══██║██╔══╝  ██╔══██╗██║   ██║
+          ██║  ██║███████╗██║  ██║╚██████╔╝
+          ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝ ╚═════╝ 
+         ══════════════════════════════════════════════════════════ */}
       <section ref={heroRef} id="hero" className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden">
-        {/* Layered gradient backdrops */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,_hsla(0,0%,20%,0.4)_0%,_transparent_70%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_50%_120%,_hsla(0,0%,10%,0.3)_0%,_transparent_60%)]" />
+        {/* Ambient glow orbs */}
+        <div className="orbital-glow w-[600px] h-[600px] bg-foreground/5 -top-48 -right-48" style={{ animation: "pulse-glow 6s ease-in-out infinite" }} />
+        <div className="orbital-glow w-[500px] h-[500px] bg-foreground/3 -bottom-32 -left-32" style={{ animation: "pulse-glow 8s ease-in-out 2s infinite" }} />
+        <div className="lens-flare top-1/4 right-1/4" />
         
-        {/* Grain overlay */}
-        <div className="absolute inset-0 z-[2] pointer-events-none opacity-[0.035]" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E\")", backgroundRepeat: "repeat" }} />
-        
-        {/* Scanlines */}
-        <div className="absolute inset-0 z-[1] pointer-events-none hero-scanlines opacity-30" />
-        
+        {/* 3D Scene */}
         <Suspense fallback={null}>
           <Scene3D className="z-0" />
         </Suspense>
 
-        {/* Left sidebar */}
+        {/* Side decorators */}
         <motion.div 
-          initial={{ opacity: 0, x: -30 }} 
-          animate={{ opacity: 1, x: 0 }} 
-          transition={{ delay: 2, duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-          className="absolute left-6 md:left-10 top-0 bottom-0 z-10 hidden lg:flex flex-col items-center justify-between py-12"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2, duration: 1 }}
+          className="absolute left-6 top-1/2 -translate-y-1/2 z-10 hidden lg:flex flex-col items-center gap-4"
         >
-          <div className="flex flex-col items-center gap-4">
-            <div className="w-px h-16 bg-gradient-to-b from-transparent to-foreground/10" />
-            <span className="text-[7px] tracking-[0.4em] text-muted-foreground/30 uppercase font-mono [writing-mode:vertical-lr] rotate-180">Portfolio — 2025</span>
+          <div className="w-px h-20 bg-gradient-to-b from-transparent via-foreground/10 to-transparent" />
+          <span className="text-[8px] tracking-[0.3em] text-muted-foreground/30 uppercase font-mono [writing-mode:vertical-lr] rotate-180">
+            Portfolio 2025
+          </span>
+          <div className="w-px h-20 bg-gradient-to-b from-transparent via-foreground/10 to-transparent" />
+        </motion.div>
+
+        <motion.div 
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2, duration: 1 }}
+          className="absolute right-6 top-1/2 -translate-y-1/2 z-10 hidden lg:flex flex-col items-center gap-4"
+        >
+          <div className="w-px h-16 bg-gradient-to-b from-transparent via-foreground/10 to-transparent" />
+          {[
+            { Icon: Github, href: "https://github.com/sheliyazaid" },
+            { Icon: Linkedin, href: "https://www.linkedin.com/in/zaid-sheliya/" },
+            { Icon: Instagram, href: "https://www.instagram.com/zaxd._.shelxya/" },
+            { Icon: Mail, href: "mailto:zaidsheliya16@gmail.com" },
+          ].map(({ Icon, href }) => (
+            <MagneticButton
+              key={href}
+              onClick={() => window.open(href, "_blank")}
+              className="text-muted-foreground/20 hover:text-foreground transition-all duration-500"
+            >
+              <Icon size={14} />
+            </MagneticButton>
+          ))}
+          <div className="w-px h-16 bg-gradient-to-b from-transparent via-foreground/10 to-transparent" />
+        </motion.div>
+
+        {/* Main hero content */}
+        <motion.div
+          id="hero-content"
+          className="relative z-10 text-center px-6 will-change-transform max-w-6xl mx-auto"
+          style={{ y: heroY, opacity: heroOpacity, scale: heroScale }}
+        >
+          {/* Available badge */}
+          <motion.div
+            initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            transition={{ delay: 0.3, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            className="inline-flex items-center gap-3 rounded-full border border-border/40 glass px-5 py-2 mb-12"
+          >
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400/75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            </span>
+            <span className="text-[9px] tracking-[0.3em] text-muted-foreground/60 uppercase font-mono">
+              Available for Freelance
+            </span>
+          </motion.div>
+
+          {/* Name — the centerpiece */}
+          <div className="relative">
+            {/* Ghost text behind */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8, duration: 1.5 }}
+              className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none"
+            >
+              <span className="font-heading text-[clamp(5rem,18vw,16rem)] font-extrabold leading-[0.8] text-stroke tracking-[-0.05em]">ZS</span>
+            </motion.div>
+
+            {/* Main name */}
+            <div className="overflow-hidden relative">
+              <motion.h1
+                initial={{ y: "120%" }}
+                animate={{ y: 0 }}
+                transition={{ delay: 0.5, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                className="font-heading text-[clamp(3rem,10vw,10rem)] font-extrabold leading-[0.85] tracking-[-0.04em] text-foreground"
+              >
+                ZAID
+              </motion.h1>
+            </div>
+            <div className="overflow-hidden mt-1">
+              <motion.h1
+                initial={{ y: "120%" }}
+                animate={{ y: 0 }}
+                transition={{ delay: 0.65, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                className="font-heading text-[clamp(3rem,10vw,10rem)] font-extrabold leading-[0.85] tracking-[-0.04em] text-gradient"
+              >
+                SHELIYA
+              </motion.h1>
+            </div>
           </div>
-          <div className="flex flex-col items-center gap-4">
+
+          {/* Typing role */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.2, duration: 0.8 }}
+            className="mt-10 flex items-center justify-center gap-4"
+          >
+            <div className="h-px w-12 bg-gradient-to-r from-transparent to-muted-foreground/30" />
+            <p className="text-sm text-muted-foreground md:text-base tracking-[0.2em] font-mono uppercase">
+              <span className="text-foreground/70">{typedText}</span>
+              <span className="animate-pulse text-foreground/30 ml-0.5">▊</span>
+            </p>
+            <div className="h-px w-12 bg-gradient-to-l from-transparent to-muted-foreground/30" />
+          </motion.div>
+
+          {/* CTA buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.5, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-14 flex items-center justify-center gap-5 flex-wrap"
+          >
+            <MagneticButton
+              onClick={() => document.getElementById("portfolio")?.scrollIntoView({ behavior: "smooth" })}
+              className="group relative overflow-hidden glass-strong animated-gradient-border rounded-full px-12 py-4 text-sm font-medium tracking-[0.15em] uppercase text-foreground transition-all duration-500 hover:glow-md"
+            >
+              <span className="relative z-10 flex items-center gap-2.5">
+                <Eye size={15} />
+                View Work
+              </span>
+            </MagneticButton>
+            <MagneticButton
+              onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
+              className="rounded-full border border-foreground/8 px-12 py-4 text-sm font-medium tracking-[0.15em] uppercase text-muted-foreground/70 transition-all duration-500 hover:border-foreground/20 hover:text-foreground hover:glow-sm"
+            >
+              <span className="flex items-center gap-2.5">
+                <Sparkles size={15} />
+                Let's Talk
+              </span>
+            </MagneticButton>
+          </motion.div>
+
+          {/* Mobile social links */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.8 }}
+            className="mt-12 flex items-center justify-center gap-5 lg:hidden"
+          >
             {[
               { Icon: Github, href: "https://github.com/sheliyazaid" },
               { Icon: Linkedin, href: "https://www.linkedin.com/in/zaid-sheliya/" },
               { Icon: Instagram, href: "https://www.instagram.com/zaxd._.shelxya/" },
               { Icon: Mail, href: "mailto:zaidsheliya16@gmail.com" },
             ].map(({ Icon, href }) => (
-              <MagneticButton key={href} onClick={() => window.open(href, "_blank")} className="text-muted-foreground/20 hover:text-foreground/70 transition-all duration-500">
-                <Icon size={13} />
+              <MagneticButton
+                key={href}
+                onClick={() => window.open(href, "_blank")}
+                className="text-muted-foreground/30 hover:text-foreground transition-all duration-500"
+              >
+                <Icon size={16} />
               </MagneticButton>
             ))}
-          </div>
-          <div className="w-px h-16 bg-gradient-to-b from-foreground/10 to-transparent" />
-        </motion.div>
-
-        {/* Right sidebar — coordinates */}
-        <motion.div 
-          initial={{ opacity: 0, x: 30 }} 
-          animate={{ opacity: 1, x: 0 }} 
-          transition={{ delay: 2.2, duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-          className="absolute right-6 md:right-10 top-0 bottom-0 z-10 hidden lg:flex flex-col items-center justify-between py-12"
-        >
-          <div className="w-px h-16 bg-gradient-to-b from-transparent to-foreground/10" />
-          <div className="flex flex-col items-center gap-2">
-            <span className="text-[7px] tracking-[0.3em] text-muted-foreground/20 font-mono [writing-mode:vertical-lr]">19.0760°N</span>
-            <div className="w-px h-4 bg-foreground/5" />
-            <span className="text-[7px] tracking-[0.3em] text-muted-foreground/20 font-mono [writing-mode:vertical-lr]">72.8777°E</span>
-          </div>
-          <div className="w-px h-16 bg-gradient-to-b from-foreground/10 to-transparent" />
-        </motion.div>
-
-        {/* Corner frames */}
-        {[["top-8 left-8", "border-l border-t"], ["top-8 right-8", "border-r border-t"], ["bottom-8 left-8", "border-l border-b"], ["bottom-8 right-8", "border-r border-b"]].map(([pos, border]) => (
-          <motion.div key={pos} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.5, duration: 1 }} className={`absolute ${pos} z-10 hidden md:block`}>
-            <div className={`w-8 h-8 ${border} border-foreground/[0.07]`} />
           </motion.div>
-        ))}
+        </motion.div>
 
-        {/* Main hero content */}
-        <motion.div id="hero-content" className="relative z-10 text-center px-6 will-change-transform max-w-7xl mx-auto perspective-section" style={{ y: heroY, opacity: heroOpacity, scale: heroScale }}>
-          <motion.div style={{ rotateX, rotateY }} className="depth-layer">
-            {/* Status badge */}
-            <motion.div initial={{ opacity: 0, y: 40, filter: "blur(12px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 0.3, duration: 1.2, ease: [0.16, 1, 0.3, 1] }} className="mb-10">
-              <div className="inline-flex items-center gap-3 rounded-full border border-foreground/[0.06] bg-foreground/[0.02] backdrop-blur-xl px-6 py-2.5">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400/60" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-                </span>
-                <span className="text-[9px] tracking-[0.4em] text-foreground/40 uppercase font-mono">Available for Hire</span>
-              </div>
-            </motion.div>
-
-            {/* THE NAME */}
-            <div className="relative">
-              <motion.div initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5, duration: 2.5, ease: [0.16, 1, 0.3, 1] }} className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
-                <span className="font-heading text-[clamp(10rem,30vw,28rem)] font-extrabold leading-none text-foreground/[0.012] tracking-[-0.06em]">ZS</span>
-              </motion.div>
-
-              <div className="overflow-hidden">
-                <motion.h1 initial={{ y: "120%", skewY: 8 }} animate={{ y: 0, skewY: 0 }} transition={{ delay: 0.5, duration: 1.6, ease: [0.16, 1, 0.3, 1] }} className="font-heading text-[clamp(4rem,14vw,13rem)] font-extrabold leading-[0.8] tracking-[-0.05em] hero-name-gradient glitch-text" data-text="ZAID">
-                  ZAID
-                </motion.h1>
-              </div>
-              <div className="overflow-hidden mt-0">
-                <motion.h1 initial={{ y: "120%", skewY: -8 }} animate={{ y: 0, skewY: 0 }} transition={{ delay: 0.7, duration: 1.6, ease: [0.16, 1, 0.3, 1] }} className="font-heading text-[clamp(4rem,14vw,13rem)] font-extrabold leading-[0.8] tracking-[-0.05em] hero-name-gradient">
-                  SHELIYA
-                </motion.h1>
-              </div>
-
-              <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 1.2, duration: 1.8, ease: [0.16, 1, 0.3, 1] }} className="absolute top-1/2 left-0 right-0 h-px bg-gradient-to-r from-transparent via-foreground/[0.06] to-transparent origin-left pointer-events-none" />
+        {/* Bottom scroll indicator with stats teaser */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 2.2 }}
+          className="absolute bottom-8 left-0 right-0 z-10 px-6"
+        >
+          <div className="max-w-4xl mx-auto flex items-end justify-between">
+            {/* Mini stats */}
+            <div className="hidden md:flex items-center gap-8">
+              {stats.slice(0, 2).map((s) => (
+                <div key={s.label} className="text-left">
+                  <div className="text-lg font-heading font-bold text-foreground/30">{s.value}</div>
+                  <div className="text-[8px] tracking-[0.2em] text-muted-foreground/25 uppercase font-mono">{s.label}</div>
+                </div>
+              ))}
             </div>
 
-            {/* Role typing with lines */}
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.3, duration: 1 }} className="mt-8 flex items-center justify-center gap-4">
-              <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 1.5, duration: 0.8 }} className="hidden md:block h-px w-16 bg-gradient-to-r from-transparent to-foreground/15 origin-right" />
-              <p className="text-sm md:text-base tracking-[0.3em] font-mono uppercase text-muted-foreground/40">
-                <span className="text-foreground/50">{typedText}</span>
-                <span className="animate-pulse text-foreground/20 ml-0.5">_</span>
-              </p>
-              <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 1.5, duration: 0.8 }} className="hidden md:block h-px w-16 bg-gradient-to-l from-transparent to-foreground/15 origin-left" />
-            </motion.div>
+            {/* Scroll */}
+            <div className="flex flex-col items-center gap-2 mx-auto md:mx-0">
+              <span className="text-[8px] tracking-[0.35em] text-muted-foreground/25 uppercase font-mono">Scroll down</span>
+              <motion.div animate={{ y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}>
+                <ArrowDown size={12} className="text-muted-foreground/25" />
+              </motion.div>
+            </div>
 
-            {/* Tagline */}
-            <motion.p initial={{ opacity: 0, y: 25, filter: "blur(6px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ delay: 1.6, duration: 1 }} className="mt-5 text-muted-foreground/30 text-sm md:text-base max-w-lg mx-auto leading-relaxed">
-              I craft digital experiences where <span className="text-foreground/60 font-medium">stunning design</span> meets <span className="text-foreground/60 font-medium">clean code</span> — pixel-perfect, every time.
-            </motion.p>
-
-            {/* CTA buttons */}
-            <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.9, duration: 1, ease: [0.16, 1, 0.3, 1] }} className="mt-14 flex items-center justify-center gap-5 flex-wrap">
-              <MagneticButton onClick={() => document.getElementById("portfolio")?.scrollIntoView({ behavior: "smooth" })} className="group relative overflow-hidden rounded-full border border-foreground/10 bg-foreground/[0.04] backdrop-blur-xl px-12 py-4 text-[10px] font-semibold tracking-[0.25em] uppercase text-foreground/90 transition-all duration-700 hover:border-foreground/25 hover:bg-foreground/[0.08] hover:shadow-[0_0_40px_hsla(0,0%,100%,0.06)] cyber-btn">
-                <span className="relative z-10 flex items-center gap-3"><Eye size={14} /> View Work</span>
-              </MagneticButton>
-              <MagneticButton onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })} className="group rounded-full border border-transparent hover:border-foreground/[0.06] px-12 py-4 text-[10px] font-semibold tracking-[0.25em] uppercase text-muted-foreground/35 transition-all duration-700 hover:text-foreground/60 hover:bg-foreground/[0.02]">
-                <span className="flex items-center gap-3"><Send size={14} /> Let's Talk</span>
-              </MagneticButton>
-            </motion.div>
-
-            {/* Mobile social */}
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.3 }} className="mt-10 flex items-center justify-center gap-6 lg:hidden">
-              {[
-                { Icon: Github, href: "https://github.com/sheliyazaid" },
-                { Icon: Linkedin, href: "https://www.linkedin.com/in/zaid-sheliya/" },
-                { Icon: Instagram, href: "https://www.instagram.com/zaxd._.shelxya/" },
-                { Icon: Mail, href: "mailto:zaidsheliya16@gmail.com" },
-              ].map(({ Icon, href }) => (
-                <MagneticButton key={href} onClick={() => window.open(href, "_blank")} className="text-muted-foreground/25 hover:text-foreground/60 transition-all duration-500">
-                  <Icon size={16} />
-                </MagneticButton>
+            {/* Mini stats right */}
+            <div className="hidden md:flex items-center gap-8">
+              {stats.slice(2).map((s) => (
+                <div key={s.label} className="text-right">
+                  <div className="text-lg font-heading font-bold text-foreground/30">{s.value}</div>
+                  <div className="text-[8px] tracking-[0.2em] text-muted-foreground/25 uppercase font-mono">{s.label}</div>
+                </div>
               ))}
-            </motion.div>
-          </motion.div>
-        </motion.div>
-
-        {/* Scroll indicator */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.8 }} className="absolute bottom-6 left-0 right-0 z-10">
-          <div className="flex flex-col items-center gap-4">
-            <span className="text-[7px] tracking-[0.5em] text-muted-foreground/15 uppercase font-mono">Scroll to Explore</span>
-            <motion.div className="w-5 h-8 rounded-full border border-foreground/[0.08] flex justify-center pt-1.5">
-              <motion.div animate={{ y: [0, 8, 0], opacity: [0.5, 0, 0.5] }} transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }} className="w-0.5 h-2 rounded-full bg-foreground/20" />
-            </motion.div>
+            </div>
           </div>
         </motion.div>
       </section>
@@ -470,7 +489,7 @@ const Index = () => {
 
       {/* ═══════════════════ ABOUT ═══════════════════ */}
       <motion.section ref={aboutRef} id="about" className="gsap-section relative z-10 py-32 will-change-transform" style={{ scale: aboutScale, y: aboutY }}>
-        <div id="about-inner" className="container mx-auto px-6 relative z-10">
+        <div id="about-inner" className="container mx-auto px-6">
           <div className="gsap-fade-up">
             <SectionHeading title="About" subtitle="A passionate creative who bridges the gap between design and development." />
           </div>
@@ -483,21 +502,16 @@ const Index = () => {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-24 gsap-fade-up max-w-5xl mx-auto perspective-section">
-            {stats.map((stat, i) => (
-              <SpotlightCard key={stat.label} className="rounded-2xl">
-                <motion.div
-                  className="relative glass rounded-2xl p-8"
-                  whileHover={{ scale: 1.05, y: -8 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: false }}
-                  custom={i}
-                >
-                  <Counter {...stat} />
-                </motion.div>
-              </SpotlightCard>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-24 gsap-fade-up max-w-5xl mx-auto">
+            {stats.map((stat) => (
+              <motion.div
+                key={stat.label}
+                className="relative group glass-strong gradient-border rounded-2xl p-8"
+                whileHover={{ scale: 1.05, y: -4 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                <Counter {...stat} />
+              </motion.div>
             ))}
           </div>
 
@@ -508,12 +522,12 @@ const Index = () => {
             {highlights.map((item, i) => (
               <motion.div
                 key={item.label}
-                initial={{ opacity: 0, y: 20, scale: 0.8 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: false }}
-                transition={{ delay: i * 0.06, type: "spring", stiffness: 200 }}
-                whileHover={{ scale: 1.1, y: -4 }}
-                className="glass rounded-full px-5 py-3 flex items-center gap-2.5 group"
+                transition={{ delay: i * 0.06 }}
+                whileHover={{ scale: 1.08, y: -4 }}
+                className="glass-strong gradient-border rounded-full px-5 py-3 flex items-center gap-2.5 group"
               >
                 <item.icon size={14} className="text-muted-foreground/50 group-hover:text-foreground transition-colors duration-300" />
                 <span className="text-[10px] text-muted-foreground/60 tracking-[0.12em] uppercase font-mono group-hover:text-foreground transition-colors duration-300">{item.label}</span>
@@ -522,17 +536,13 @@ const Index = () => {
           </div>
 
           {/* Skills */}
-          <div className="grid gap-6 md:grid-cols-2 max-w-4xl mx-auto gsap-fade-up perspective-section">
+          <div className="grid gap-6 md:grid-cols-2 max-w-4xl mx-auto gsap-fade-up">
             <TiltCard delay={0.1} glare>
-              <div className="space-y-5 relative">
+              <div className="space-y-5">
                 <div className="flex items-center gap-3 mb-6">
-                  <motion.div
-                    className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/30 glass"
-                    whileHover={{ rotate: 360 }}
-                    transition={{ duration: 0.8 }}
-                  >
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/30 glass">
                     <Palette size={16} className="text-foreground/50" />
-                  </motion.div>
+                  </div>
                   <h3 className="font-heading text-base font-semibold text-foreground">Design</h3>
                 </div>
                 {designSkills.map((skill, i) => (
@@ -542,15 +552,11 @@ const Index = () => {
             </TiltCard>
 
             <TiltCard delay={0.2} glare>
-              <div className="space-y-5 relative">
+              <div className="space-y-5">
                 <div className="flex items-center gap-3 mb-6">
-                  <motion.div
-                    className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/30 glass"
-                    whileHover={{ rotate: 360 }}
-                    transition={{ duration: 0.8 }}
-                  >
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/30 glass">
                     <Terminal size={16} className="text-foreground/50" />
-                  </motion.div>
+                  </div>
                   <h3 className="font-heading text-base font-semibold text-foreground">Development</h3>
                 </div>
                 {devSkills.map((skill, i) => (
@@ -564,7 +570,7 @@ const Index = () => {
 
       {/* ═══════════════════ PORTFOLIO ═══════════════════ */}
       <section id="portfolio" className="gsap-section relative z-10 py-32">
-        <div className="container mx-auto px-6 relative z-10">
+        <div className="container mx-auto px-6">
           <div className="gsap-fade-up">
             <SectionHeading title="Selected Work" subtitle="Projects that showcase design and development expertise." />
           </div>
@@ -579,7 +585,7 @@ const Index = () => {
                 onClick={() => setActiveFilter(cat)}
                 className={`rounded-full px-7 py-2.5 text-[10px] tracking-[0.2em] uppercase font-mono transition-all duration-500 ${
                   activeFilter === cat
-                    ? "glass text-foreground border border-foreground/10"
+                    ? "glass-strong text-foreground glow-sm animated-gradient-border"
                     : "text-muted-foreground/50 hover:text-foreground border border-transparent hover:border-border/20"
                 }`}
               >
@@ -589,51 +595,49 @@ const Index = () => {
           </div>
 
           {/* Project grid */}
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-w-7xl mx-auto gsap-fade-up perspective-section">
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-w-7xl mx-auto gsap-fade-up">
             <AnimatePresence mode="popLayout">
               {filtered.map((project, i) => (
                 <motion.div
                   key={project.title}
                   layout
-                  initial={{ opacity: 0, y: 50 }}
+                  initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.6, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.5, delay: i * 0.06 }}
                 >
-                  <SpotlightCard className="rounded-2xl h-full">
-                    <motion.div
-                      whileHover={{ y: -10, scale: 1.02 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                      className="group glass gradient-border rounded-2xl overflow-hidden h-full"
-                    >
-                      <div className="relative overflow-hidden">
-                        <motion.img
-                          src={project.image}
-                          alt={project.title}
-                          className="w-full h-52 object-cover"
-                          whileHover={{ scale: 1.1 }}
-                          transition={{ duration: 0.7 }}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent opacity-60 group-hover:opacity-90 transition-opacity duration-500" />
-                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
-                          <span className="flex items-center gap-2 text-[10px] font-mono text-foreground tracking-[0.2em] uppercase glass rounded-full px-5 py-2">
-                            <ExternalLink size={11} /> View
-                          </span>
-                        </div>
-                      </div>
-                      <div className="p-5">
-                        <span className="text-[8px] tracking-[0.3em] text-muted-foreground/40 uppercase font-mono">
-                          {project.category}
+                  <motion.div
+                    whileHover={{ y: -10 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    className="group glass-strong gradient-border rounded-2xl overflow-hidden h-full"
+                  >
+                    <div className="relative overflow-hidden">
+                      <motion.img
+                        src={project.image}
+                        alt={project.title}
+                        className="w-full h-52 object-cover"
+                        whileHover={{ scale: 1.1 }}
+                        transition={{ duration: 0.7 }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent opacity-50 group-hover:opacity-80 transition-opacity duration-500" />
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-2 group-hover:translate-y-0">
+                        <span className="flex items-center gap-2 text-[10px] font-mono text-foreground tracking-[0.2em] uppercase glass-strong rounded-full px-5 py-2">
+                          <ExternalLink size={11} /> View Project
                         </span>
-                        <h3 className="font-heading text-sm font-semibold text-foreground mt-2 group-hover:text-gradient transition-all duration-300">
-                          {project.title}
-                        </h3>
-                        <p className="mt-2 text-[11px] text-muted-foreground/50 leading-relaxed">
-                          {project.description}
-                        </p>
                       </div>
-                    </motion.div>
-                  </SpotlightCard>
+                    </div>
+                    <div className="p-5">
+                      <span className="text-[8px] tracking-[0.3em] text-muted-foreground/40 uppercase font-mono">
+                        {project.category}
+                      </span>
+                      <h3 className="font-heading text-sm font-semibold text-foreground mt-2 group-hover:text-gradient transition-all duration-300">
+                        {project.title}
+                      </h3>
+                      <p className="mt-2 text-[11px] text-muted-foreground/50 leading-relaxed">
+                        {project.description}
+                      </p>
+                    </div>
+                  </motion.div>
                 </motion.div>
               ))}
             </AnimatePresence>
@@ -643,43 +647,39 @@ const Index = () => {
 
       {/* ═══════════════════ SERVICES ═══════════════════ */}
       <section id="services" className="gsap-section relative z-10 py-32">
-        <div className="container mx-auto px-6 relative z-10">
+        <div className="container mx-auto px-6">
           <div className="gsap-fade-up">
             <SectionHeading title="Services" subtitle="What I bring to your next project." />
           </div>
 
           <div className="section-divider mx-auto w-full max-w-4xl mb-20" />
 
-          <div className="grid gap-5 sm:grid-cols-2 max-w-4xl mx-auto gsap-fade-up perspective-section">
-            {services.map((service, i) => (
-              <SpotlightCard key={service.title} className="rounded-2xl">
-                <motion.div
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: false, amount: 0.2 }}
-                  transition={{ delay: i * 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                  whileHover={{ y: -8, scale: 1.02 }}
-                  className="group relative glass gradient-border rounded-2xl p-8 overflow-hidden"
-                >
-                  <div className={`absolute inset-0 bg-gradient-to-br ${service.accent} opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-2xl`} />
-                  
-                  <div className="relative z-10">
-                    <motion.div
-                      className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border border-border/30 glass"
-                      whileHover={{ rotate: 15, scale: 1.1 }}
-                      transition={{ type: "spring", stiffness: 300 }}
-                    >
-                      <service.icon size={20} className="text-foreground/50 group-hover:text-foreground transition-colors duration-300" />
-                    </motion.div>
-                    <h3 className="font-heading text-base font-semibold text-foreground mb-3">
-                      {service.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground/60 leading-relaxed">
-                      {service.description}
-                    </p>
-                  </div>
-                </motion.div>
-              </SpotlightCard>
+          <div className="grid gap-5 sm:grid-cols-2 max-w-4xl mx-auto gsap-fade-up">
+            {services.map((service) => (
+              <motion.div
+                key={service.title}
+                whileHover={{ y: -8, scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                className="group relative glass-strong gradient-border rounded-2xl p-8 overflow-hidden"
+              >
+                <div className={`absolute inset-0 bg-gradient-to-br ${service.accent} opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-2xl`} />
+                
+                <div className="relative z-10">
+                  <motion.div
+                    className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border border-border/30 glass"
+                    whileHover={{ rotate: 10, scale: 1.1 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <service.icon size={20} className="text-foreground/50 group-hover:text-foreground transition-colors duration-300" />
+                  </motion.div>
+                  <h3 className="font-heading text-base font-semibold text-foreground mb-3">
+                    {service.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground/60 leading-relaxed">
+                    {service.description}
+                  </p>
+                </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -687,67 +687,67 @@ const Index = () => {
 
       {/* ═══════════════════ TESTIMONIALS ═══════════════════ */}
       <section id="testimonials" className="gsap-section relative z-10 py-32 overflow-hidden">
-        <div className="container mx-auto px-6 relative z-10">
+        <div className="container mx-auto px-6">
           <div className="gsap-fade-up">
             <SectionHeading title="Wall of Love" subtitle="What clients & collaborators say about working with me." />
           </div>
 
           <div className="section-divider mx-auto w-full max-w-5xl mb-16" />
 
-          <div className="grid gap-4 md:grid-cols-3 max-w-6xl mx-auto gsap-fade-up auto-rows-auto perspective-section">
+          <div className="grid gap-4 md:grid-cols-3 max-w-6xl mx-auto gsap-fade-up auto-rows-auto">
             {testimonials.map((t, i) => (
-              <SpotlightCard key={t.name} className={`rounded-2xl ${t.featured ? "md:row-span-2" : ""}`}>
-                <motion.div
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: false, amount: 0.2 }}
-                  transition={{ delay: i * 0.07, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                  whileHover={{ y: -6, scale: 1.01 }}
-                  className={`group relative glass gradient-border rounded-2xl p-7 overflow-hidden h-full ${
-                    t.featured ? "flex flex-col justify-between" : ""
-                  }`}
-                >
-                  <div className={`absolute inset-0 bg-gradient-to-br ${t.accent} opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-2xl`} />
+              <motion.div
+                key={t.name}
+                initial={{ opacity: 0, y: 40, rotateX: 12 }}
+                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+                viewport={{ once: false, amount: 0.2 }}
+                transition={{ delay: i * 0.07, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                whileHover={{ y: -6, scale: 1.02 }}
+                className={`group relative glass-strong gradient-border rounded-2xl p-7 overflow-hidden ${
+                  t.featured ? "md:row-span-2 flex flex-col justify-between" : ""
+                }`}
+                style={{ perspective: "800px" }}
+              >
+                <div className={`absolute inset-0 bg-gradient-to-br ${t.accent} opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-2xl`} />
 
-                  <div className="relative z-10">
-                    <div className="text-foreground/[0.03] font-heading text-7xl leading-none mb-1 select-none">"</div>
+                <div className="relative z-10">
+                  <div className="text-foreground/[0.04] font-heading text-7xl leading-none mb-1 select-none">"</div>
 
-                    <p className={`text-foreground/70 leading-relaxed ${t.featured ? "text-base md:text-lg" : "text-sm"}`}>
-                      {t.quote}
-                    </p>
+                  <p className={`text-foreground/70 leading-relaxed ${t.featured ? "text-base md:text-lg" : "text-sm"}`}>
+                    {t.quote}
+                  </p>
 
-                    <div className="flex gap-0.5 mt-5 mb-4">
-                      {Array.from({ length: 5 }).map((_, si) => (
-                        <motion.div
-                          key={si}
-                          initial={{ opacity: 0, scale: 0 }}
-                          whileInView={{ opacity: 1, scale: 1 }}
-                          viewport={{ once: false }}
-                          transition={{ delay: i * 0.07 + si * 0.04 + 0.3 }}
-                        >
-                          <Star size={11} className="text-foreground/25 fill-foreground/25" />
-                        </motion.div>
-                      ))}
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-9 w-9 items-center justify-center rounded-full border border-border/30 glass text-foreground/40 font-heading text-[10px] font-bold">
-                        {t.name.split(" ").map(n => n[0]).join("")}
-                      </div>
-                      <div>
-                        <p className="text-xs font-medium text-foreground/80">{t.name}</p>
-                        <p className="text-[9px] text-muted-foreground/40 font-mono tracking-wide">{t.role}</p>
-                      </div>
-                    </div>
+                  <div className="flex gap-0.5 mt-5 mb-4">
+                    {Array.from({ length: 5 }).map((_, si) => (
+                      <motion.div
+                        key={si}
+                        initial={{ opacity: 0, scale: 0 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: false }}
+                        transition={{ delay: i * 0.07 + si * 0.04 + 0.3 }}
+                      >
+                        <Star size={11} className="text-foreground/25 fill-foreground/25" />
+                      </motion.div>
+                    ))}
                   </div>
 
-                  {t.featured && (
-                    <div className="absolute top-4 right-4 text-[7px] tracking-[0.2em] uppercase font-mono text-muted-foreground/20 border border-border/15 rounded-full px-3 py-1">
-                      Featured
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full border border-border/30 glass text-foreground/40 font-heading text-[10px] font-bold">
+                      {t.name.split(" ").map(n => n[0]).join("")}
                     </div>
-                  )}
-                </motion.div>
-              </SpotlightCard>
+                    <div>
+                      <p className="text-xs font-medium text-foreground/80">{t.name}</p>
+                      <p className="text-[9px] text-muted-foreground/40 font-mono tracking-wide">{t.role}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {t.featured && (
+                  <div className="absolute top-4 right-4 text-[7px] tracking-[0.2em] uppercase font-mono text-muted-foreground/20 border border-border/20 rounded-full px-3 py-1">
+                    Featured
+                  </div>
+                )}
+              </motion.div>
             ))}
           </div>
         </div>
@@ -755,92 +755,84 @@ const Index = () => {
 
       {/* ═══════════════════ CONTACT ═══════════════════ */}
       <section id="contact" className="gsap-section relative z-10 py-32">
-        <div className="container mx-auto px-6 relative z-10">
+        <div className="container mx-auto px-6">
           <div className="gsap-fade-up">
             <SectionHeading title="Let's Talk" subtitle="Have a project in mind? Let's make it happen." />
           </div>
 
           <div className="section-divider mx-auto w-full max-w-lg mb-14" />
 
-          <div className="max-w-lg mx-auto gsap-fade-up perspective-section">
-            <SpotlightCard className="rounded-2xl">
-              <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false }}
-                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="glass gradient-border rounded-2xl p-10 relative overflow-hidden"
-              >
-                <form onSubmit={handleSubmit} className="space-y-7 relative z-10">
-                  <div className="space-y-2">
-                    <label className="text-[9px] tracking-[0.3em] text-muted-foreground uppercase font-mono">Name</label>
-                    <input
-                      required
-                      value={form.name}
-                      onChange={(e) => setForm({ ...form, name: e.target.value })}
-                      className="w-full rounded-xl border border-border/30 bg-secondary/20 px-5 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-foreground/20 transition-all font-mono"
-                      placeholder="your name"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[9px] tracking-[0.3em] text-muted-foreground uppercase font-mono">Phone</label>
-                    <input
-                      required
-                      value={form.phone}
-                      onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                      className="w-full rounded-xl border border-border/30 bg-secondary/20 px-5 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-foreground/20 transition-all font-mono"
-                      placeholder="your phone"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[9px] tracking-[0.3em] text-muted-foreground uppercase font-mono">Message</label>
-                    <textarea
-                      required
-                      rows={4}
-                      value={form.message}
-                      onChange={(e) => setForm({ ...form, message: e.target.value })}
-                      className="w-full rounded-xl border border-border/30 bg-secondary/20 px-5 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-foreground/20 transition-all resize-none font-mono"
-                      placeholder="tell me about your project..."
-                    />
-                  </div>
-                  <MagneticButton
-                    type="submit"
-                    className="w-full rounded-xl border border-foreground/10 bg-foreground/[0.03] py-4 text-sm font-medium tracking-[0.15em] uppercase text-foreground flex items-center justify-center gap-3 hover:bg-foreground/[0.06] transition-all duration-500"
-                  >
-                    <Send size={13} />
-                    Send via WhatsApp
-                  </MagneticButton>
-                </form>
-                <div className="mt-6 flex items-center justify-center gap-2 text-muted-foreground/50 relative z-10">
-                  <MessageCircle size={11} />
-                  <span className="text-[8px] tracking-[0.25em] font-mono uppercase">Opens WhatsApp directly</span>
+          <div className="max-w-lg mx-auto gsap-fade-up">
+            <div className="glass-strong gradient-border rounded-2xl p-10 relative overflow-hidden noise">
+              <form onSubmit={handleSubmit} className="space-y-7 relative z-10">
+                <div className="space-y-2">
+                  <label className="text-[9px] tracking-[0.3em] text-muted-foreground/50 uppercase font-mono">Name</label>
+                  <input
+                    required
+                    value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    className="w-full rounded-xl border border-border/30 bg-secondary/20 px-5 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/20 focus:outline-none focus:border-foreground/15 transition-all font-mono"
+                    placeholder="your name"
+                  />
                 </div>
-              </motion.div>
-            </SpotlightCard>
+                <div className="space-y-2">
+                  <label className="text-[9px] tracking-[0.3em] text-muted-foreground/50 uppercase font-mono">Phone</label>
+                  <input
+                    required
+                    value={form.phone}
+                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                    className="w-full rounded-xl border border-border/30 bg-secondary/20 px-5 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/20 focus:outline-none focus:border-foreground/15 transition-all font-mono"
+                    placeholder="your phone"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[9px] tracking-[0.3em] text-muted-foreground/50 uppercase font-mono">Message</label>
+                  <textarea
+                    required
+                    rows={4}
+                    value={form.message}
+                    onChange={(e) => setForm({ ...form, message: e.target.value })}
+                    className="w-full rounded-xl border border-border/30 bg-secondary/20 px-5 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/20 focus:outline-none focus:border-foreground/15 transition-all resize-none font-mono"
+                    placeholder="tell me about your project..."
+                  />
+                </div>
+                <MagneticButton
+                  type="submit"
+                  className="w-full glass-strong animated-gradient-border rounded-xl py-4 text-sm font-medium tracking-[0.15em] uppercase text-foreground flex items-center justify-center gap-3 hover:glow-md transition-all duration-500"
+                >
+                  <Send size={13} />
+                  Send via WhatsApp
+                </MagneticButton>
+              </form>
+              <div className="mt-6 flex items-center justify-center gap-2 text-muted-foreground/30 relative z-10">
+                <MessageCircle size={11} />
+                <span className="text-[8px] tracking-[0.25em] font-mono uppercase">Opens WhatsApp directly</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* ═══════════════════ FOOTER ═══════════════════ */}
-      <footer className="relative z-10 border-t border-border/15">
+      <footer className="relative z-10 border-t border-border/20">
         <div className="container mx-auto px-6">
           <div className="grid md:grid-cols-3 gap-12 py-20">
             <div>
               <p className="font-heading text-3xl font-extrabold tracking-wider text-foreground mb-4">
-                ZS<span className="text-muted-foreground/30">.</span>
+                ZS<span className="text-gradient-gold">.</span>
               </p>
-              <p className="text-sm text-muted-foreground/60 leading-relaxed max-w-xs">
+              <p className="text-sm text-muted-foreground/40 leading-relaxed max-w-xs">
                 A creative developer crafting digital experiences that blend stunning design with clean, performant code.
               </p>
             </div>
             <div>
-              <h4 className="text-[9px] tracking-[0.3em] text-foreground/50 uppercase font-mono mb-8">Quick Links</h4>
+              <h4 className="text-[9px] tracking-[0.3em] text-foreground/60 uppercase font-mono mb-8">Quick Links</h4>
               <div className="space-y-4">
                 {["hero", "about", "portfolio", "services", "contact"].map((id) => (
                   <button
                     key={id}
                     onClick={() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" })}
-                    className="block text-sm text-muted-foreground/50 hover:text-foreground transition-colors duration-300 capitalize tracking-wide"
+                    className="block text-sm text-muted-foreground/35 hover:text-foreground transition-colors duration-300 capitalize tracking-wide"
                   >
                     {id === "hero" ? "Home" : id}
                   </button>
@@ -848,7 +840,7 @@ const Index = () => {
               </div>
             </div>
             <div>
-              <h4 className="text-[9px] tracking-[0.3em] text-foreground/50 uppercase font-mono mb-8">Connect</h4>
+              <h4 className="text-[9px] tracking-[0.3em] text-foreground/60 uppercase font-mono mb-8">Connect</h4>
               <div className="flex gap-3 mb-6">
                 {[
                   { Icon: Github, label: "GitHub", href: "https://github.com/sheliyazaid" },
@@ -859,24 +851,24 @@ const Index = () => {
                   <MagneticButton
                     key={label}
                     onClick={() => window.open(href, "_blank")}
-                    className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/20 text-muted-foreground/50 hover:text-foreground hover:border-foreground/15 transition-all duration-500"
+                    className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/20 text-muted-foreground/30 hover:text-foreground hover:border-foreground/15 hover:glow-sm transition-all duration-500"
                   >
                     <Icon size={14} />
                   </MagneticButton>
                 ))}
               </div>
-              <p className="text-[11px] text-muted-foreground/50 font-mono tracking-wide">
+              <p className="text-[11px] text-muted-foreground/30 font-mono tracking-wide">
                 zaidsheliya16@gmail.com
               </p>
             </div>
           </div>
           <div className="section-divider" />
           <div className="py-8 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-[9px] text-muted-foreground/40 tracking-[0.15em] font-mono">
+            <p className="text-[9px] text-muted-foreground/30 tracking-[0.15em] font-mono">
               © {new Date().getFullYear()} Zaid Sheliya. All rights reserved.
             </p>
-            <p className="text-[9px] text-muted-foreground/40 tracking-[0.15em] font-mono flex items-center gap-1.5">
-              Designed & Built with <Heart size={9} className="text-foreground/30" /> in India
+            <p className="text-[9px] text-muted-foreground/30 tracking-[0.15em] font-mono flex items-center gap-1.5">
+              Designed & Built with <Heart size={9} className="text-foreground/20" /> in India
             </p>
           </div>
         </div>
@@ -890,7 +882,7 @@ const Index = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="fixed bottom-8 right-8 z-50 glass gradient-border rounded-full p-3.5 text-foreground/40 hover:text-foreground transition-all duration-500"
+            className="fixed bottom-8 right-8 z-50 glass-strong gradient-border rounded-full p-3.5 text-foreground/50 hover:text-foreground hover:glow-md transition-all duration-500"
           >
             <ArrowUp size={14} />
           </motion.button>
