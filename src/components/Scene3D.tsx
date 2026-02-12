@@ -3,7 +3,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Float, Stars } from "@react-three/drei";
 import * as THREE from "three";
 
-// Mouse-reactive camera with more dramatic movement
+// Mouse-reactive camera
 function MouseCamera() {
   const { camera } = useThree();
   const mouse = useRef({ x: 0, y: 0 });
@@ -27,156 +27,83 @@ function MouseCamera() {
   return null;
 }
 
-// Neon ground grid — cyberpunk floor
-function NeonGrid() {
+// ─── CURLY BRACES { } — the developer's signature ───
+function CurlyBrace({ position, scale = 1, speed = 0.1, mirror = false }: { position: [number, number, number]; scale?: number; speed?: number; mirror?: boolean }) {
   const ref = useRef<THREE.Group>(null);
 
-  const gridLines = useMemo(() => {
-    const lines: { start: THREE.Vector3; end: THREE.Vector3 }[] = [];
-    const size = 30;
-    const divisions = 30;
-    const step = size / divisions;
-    const half = size / 2;
+  const braceGeo = useMemo(() => {
+    const shape = new THREE.Shape();
+    const s = mirror ? -1 : 1;
+    // Draw a curly brace shape
+    shape.moveTo(0.15 * s, 0.5);
+    shape.bezierCurveTo(0.05 * s, 0.5, 0, 0.4, 0, 0.3);
+    shape.lineTo(0, 0.1);
+    shape.bezierCurveTo(0, 0.05, -0.1 * s, 0.02, -0.15 * s, 0);
+    shape.bezierCurveTo(-0.1 * s, -0.02, 0, -0.05, 0, -0.1);
+    shape.lineTo(0, -0.3);
+    shape.bezierCurveTo(0, -0.4, 0.05 * s, -0.5, 0.15 * s, -0.5);
 
-    for (let i = 0; i <= divisions; i++) {
-      const pos = -half + i * step;
-      // Z lines
-      lines.push({ start: new THREE.Vector3(pos, 0, -half), end: new THREE.Vector3(pos, 0, half) });
-      // X lines
-      lines.push({ start: new THREE.Vector3(-half, 0, pos), end: new THREE.Vector3(half, 0, pos) });
-    }
-    return lines;
-  }, []);
+    const points = shape.getPoints(24);
+    const vertices = new Float32Array(points.length * 3);
+    points.forEach((p, i) => {
+      vertices[i * 3] = p.x;
+      vertices[i * 3 + 1] = p.y;
+      vertices[i * 3 + 2] = 0;
+    });
+
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
+    return geo;
+  }, [mirror]);
 
   useFrame((state) => {
     if (ref.current) {
-      ref.current.position.z = (state.clock.elapsedTime * 0.5) % 1;
+      ref.current.rotation.y = Math.sin(state.clock.elapsedTime * speed) * 0.4;
+      ref.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.3 + position[0]) * 0.3;
     }
   });
 
   return (
-    <group ref={ref} position={[0, -4, 0]} rotation={[0, 0, 0]}>
-      {gridLines.map((line, i) => {
-        const geo = new THREE.BufferGeometry().setFromPoints([line.start, line.end]);
-        return (
-          <lineSegments key={i} geometry={geo}>
-            <lineBasicMaterial color="#ffffff" transparent opacity={0.035} />
-          </lineSegments>
-        );
-      })}
-      {/* Glow plane beneath grid */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.1, 0]}>
-        <planeGeometry args={[30, 30]} />
-        <meshBasicMaterial color="#ffffff" transparent opacity={0.008} />
-      </mesh>
-    </group>
-  );
-}
-
-// Glowing torus knot — centerpiece
-function GlowingTorusKnot() {
-  const ref = useRef<THREE.Mesh>(null);
-
-  useFrame((state) => {
-    if (ref.current) {
-      ref.current.rotation.x = state.clock.elapsedTime * 0.15;
-      ref.current.rotation.y = state.clock.elapsedTime * 0.1;
-      ref.current.rotation.z = state.clock.elapsedTime * 0.05;
-    }
-  });
-
-  return (
-    <Float speed={0.4} rotationIntensity={0.08} floatIntensity={0.3}>
-      <mesh ref={ref}>
-        <torusKnotGeometry args={[1.6, 0.05, 256, 32, 2, 3]} />
-        <meshStandardMaterial
-          color="#ffffff"
-          emissive="#ffffff"
-          emissiveIntensity={0.15}
-          wireframe
-          transparent
-          opacity={0.12}
-        />
-      </mesh>
+    <Float speed={0.8} rotationIntensity={0.1} floatIntensity={0.4}>
+      <group ref={ref} position={position} scale={scale}>
+        <lineSegments geometry={braceGeo}>
+          <lineBasicMaterial color="#ffffff" transparent opacity={0.2} />
+        </lineSegments>
+      </group>
     </Float>
   );
 }
 
-// DNA Helix structure — tech-bio aesthetic
-function DNAHelix() {
-  const ref = useRef<THREE.Group>(null);
-
-  const helixPoints = useMemo(() => {
-    const points: { pos1: [number, number, number]; pos2: [number, number, number]; connector: boolean }[] = [];
-    for (let i = 0; i < 60; i++) {
-      const t = i * 0.15;
-      const y = i * 0.12 - 3.5;
-      const r = 0.8;
-      const x1 = Math.cos(t) * r;
-      const z1 = Math.sin(t) * r;
-      const x2 = Math.cos(t + Math.PI) * r;
-      const z2 = Math.sin(t + Math.PI) * r;
-      points.push({
-        pos1: [x1, y, z1],
-        pos2: [x2, y, z2],
-        connector: i % 4 === 0,
-      });
-    }
-    return points;
-  }, []);
-
-  useFrame((state) => {
-    if (ref.current) {
-      ref.current.rotation.y = state.clock.elapsedTime * 0.1;
-    }
-  });
-
-  return (
-    <group ref={ref} position={[6, 0, -5]}>
-      {helixPoints.map((p, i) => (
-        <group key={i}>
-          <mesh position={p.pos1}>
-            <sphereGeometry args={[0.025, 8, 8]} />
-            <meshBasicMaterial color="#ffffff" transparent opacity={0.3} />
-          </mesh>
-          <mesh position={p.pos2}>
-            <sphereGeometry args={[0.025, 8, 8]} />
-            <meshBasicMaterial color="#ffffff" transparent opacity={0.2} />
-          </mesh>
-          {p.connector && (
-            (() => {
-              const geo = new THREE.BufferGeometry().setFromPoints([
-                new THREE.Vector3(...p.pos1),
-                new THREE.Vector3(...p.pos2),
-              ]);
-              return (
-                <lineSegments geometry={geo}>
-                  <lineBasicMaterial color="#ffffff" transparent opacity={0.08} />
-                </lineSegments>
-              );
-            })()
-          )}
-        </group>
-      ))}
-    </group>
-  );
-}
-
-// Code bracket < > — developer signature
-function CodeBracket({ position, scale = 1, speed = 0.1 }: { position: [number, number, number]; scale?: number; speed?: number }) {
+// ─── CODE ANGLE BRACKETS < /> — HTML/JSX signature ───
+function AngleBracket({ position, scale = 1, speed = 0.1, type = "open" }: { position: [number, number, number]; scale?: number; speed?: number; type?: "open" | "close" | "self-close" }) {
   const ref = useRef<THREE.Group>(null);
 
   const bracketShape = useMemo(() => {
     const shape = new THREE.BufferGeometry();
-    const vertices = new Float32Array([
-      0.3, 0.5, 0,
-      0, 0, 0,
-      0, 0, 0,
-      0.3, -0.5, 0,
-    ]);
+    let vertices: Float32Array;
+
+    if (type === "open") {
+      vertices = new Float32Array([
+        0.3, 0.5, 0, 0, 0, 0, 0, 0, 0, 0.3, -0.5, 0,
+      ]);
+    } else if (type === "close") {
+      vertices = new Float32Array([
+        -0.3, 0.5, 0, 0, 0, 0, 0, 0, 0, -0.3, -0.5, 0,
+      ]);
+    } else {
+      // self-closing < />
+      vertices = new Float32Array([
+        0.3, 0.5, 0, 0, 0, 0, 0, 0, 0, 0.3, -0.5, 0,
+        // slash
+        0.15, 0.4, 0, -0.05, -0.4, 0,
+        // closing >
+        0.45, 0.5, 0, 0.75, 0, 0, 0.75, 0, 0, 0.45, -0.5, 0,
+      ]);
+    }
+
     shape.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
     return shape;
-  }, []);
+  }, [type]);
 
   useFrame((state) => {
     if (ref.current) {
@@ -188,34 +115,74 @@ function CodeBracket({ position, scale = 1, speed = 0.1 }: { position: [number, 
   return (
     <group ref={ref} position={position} scale={scale}>
       <lineSegments geometry={bracketShape}>
-        <lineBasicMaterial color="#ffffff" transparent opacity={0.2} />
+        <lineBasicMaterial color="#ffffff" transparent opacity={0.18} />
       </lineSegments>
     </group>
   );
 }
 
-// Floating wireframe cubes — data blocks
-function DataCube({ position, size = 0.4, speed = 0.2 }: { position: [number, number, number]; size?: number; speed?: number }) {
-  const ref = useRef<THREE.Mesh>(null);
+// ─── TERMINAL WINDOW — floating code editor frame ───
+function TerminalWindow({ position, scale = 1 }: { position: [number, number, number]; scale?: number }) {
+  const ref = useRef<THREE.Group>(null);
 
   useFrame((state) => {
     if (ref.current) {
-      ref.current.rotation.x = state.clock.elapsedTime * speed;
-      ref.current.rotation.z = state.clock.elapsedTime * speed * 0.7;
+      ref.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.1) * 0.15;
+      ref.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.08) * 0.05;
+      ref.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.25) * 0.15;
     }
   });
 
   return (
-    <Float speed={1.2} rotationIntensity={0.2} floatIntensity={0.6}>
-      <mesh ref={ref} position={position}>
-        <boxGeometry args={[size, size, size]} />
-        <meshStandardMaterial color="#ffffff" wireframe transparent opacity={0.06} />
-      </mesh>
+    <Float speed={0.4} rotationIntensity={0.05} floatIntensity={0.2}>
+      <group ref={ref} position={position} scale={scale}>
+        {/* Window frame */}
+        <mesh>
+          <planeGeometry args={[2, 1.3]} />
+          <meshBasicMaterial color="#ffffff" transparent opacity={0.015} />
+        </mesh>
+        {/* Top bar */}
+        <mesh position={[0, 0.55, 0.01]}>
+          <planeGeometry args={[2, 0.12]} />
+          <meshBasicMaterial color="#ffffff" transparent opacity={0.03} />
+        </mesh>
+        {/* Window dots */}
+        {[[-0.85, 0.55, 0.02], [-0.78, 0.55, 0.02], [-0.71, 0.55, 0.02]].map((pos, i) => (
+          <mesh key={i} position={pos as [number, number, number]}>
+            <circleGeometry args={[0.02, 12]} />
+            <meshBasicMaterial color="#ffffff" transparent opacity={0.12 - i * 0.03} />
+          </mesh>
+        ))}
+        {/* Code lines */}
+        {[0.3, 0.12, -0.06, -0.24, -0.42].map((y, i) => (
+          <mesh key={`line-${i}`} position={[-0.3 + (i % 2) * 0.15, y, 0.01]}>
+            <planeGeometry args={[0.8 - (i % 3) * 0.2, 0.04]} />
+            <meshBasicMaterial color="#ffffff" transparent opacity={0.06 - i * 0.008} />
+          </mesh>
+        ))}
+        {/* Border */}
+        {(() => {
+          const w = 2, h = 1.3;
+          const points = [
+            new THREE.Vector3(-w / 2, -h / 2, 0.01),
+            new THREE.Vector3(w / 2, -h / 2, 0.01),
+            new THREE.Vector3(w / 2, h / 2, 0.01),
+            new THREE.Vector3(-w / 2, h / 2, 0.01),
+            new THREE.Vector3(-w / 2, -h / 2, 0.01),
+          ];
+          const geo = new THREE.BufferGeometry().setFromPoints(points);
+          return (
+            <lineSegments geometry={geo}>
+              <lineBasicMaterial color="#ffffff" transparent opacity={0.06} />
+            </lineSegments>
+          );
+        })()}
+      </group>
     </Float>
   );
 }
 
-// Circuit lines — techy grid connections
+// ─── CIRCUIT BOARD — techy grid connections ───
 function CircuitLines() {
   const ref = useRef<THREE.Group>(null);
 
@@ -271,7 +238,7 @@ function CircuitLines() {
   );
 }
 
-// Terminal cursor blink
+// ─── TERMINAL CURSOR BLINK ───
 function TerminalCursor({ position }: { position: [number, number, number] }) {
   const ref = useRef<THREE.Mesh>(null);
 
@@ -291,7 +258,7 @@ function TerminalCursor({ position }: { position: [number, number, number] }) {
   );
 }
 
-// Central morphing icosahedron — techy
+// ─── CENTRAL MORPHING WIREFRAME SPHERE ───
 function CentralSphere() {
   const meshRef = useRef<THREE.Mesh>(null);
   const geoRef = useRef<THREE.IcosahedronGeometry>(null);
@@ -339,7 +306,7 @@ function CentralSphere() {
   );
 }
 
-// Floating particles — more count, better distribution
+// ─── FLOATING PARTICLES ───
 function Particles() {
   const count = 500;
   const positions = useMemo(() => {
@@ -371,7 +338,28 @@ function Particles() {
   );
 }
 
-// Orbit rings with glow
+// ─── WIREFRAME DATA CUBES ───
+function DataCube({ position, size = 0.4, speed = 0.2 }: { position: [number, number, number]; size?: number; speed?: number }) {
+  const ref = useRef<THREE.Mesh>(null);
+
+  useFrame((state) => {
+    if (ref.current) {
+      ref.current.rotation.x = state.clock.elapsedTime * speed;
+      ref.current.rotation.z = state.clock.elapsedTime * speed * 0.7;
+    }
+  });
+
+  return (
+    <Float speed={1.2} rotationIntensity={0.2} floatIntensity={0.6}>
+      <mesh ref={ref} position={position}>
+        <boxGeometry args={[size, size, size]} />
+        <meshStandardMaterial color="#ffffff" wireframe transparent opacity={0.06} />
+      </mesh>
+    </Float>
+  );
+}
+
+// ─── ORBIT RINGS ───
 function OrbitRing({ radius = 3, speed = 0.3, tilt = 0, opacity = 0.1 }: { radius?: number; speed?: number; tilt?: number; opacity?: number }) {
   const ref = useRef<THREE.Mesh>(null);
 
@@ -390,7 +378,7 @@ function OrbitRing({ radius = 3, speed = 0.3, tilt = 0, opacity = 0.1 }: { radiu
   );
 }
 
-// Binary rain columns
+// ─── BINARY RAIN — matrix-style falling data ───
 function BinaryRain() {
   const ref = useRef<THREE.Group>(null);
   
@@ -431,23 +419,114 @@ function BinaryRain() {
   );
 }
 
-// Floating wireframe octahedrons
-function FloatingOctahedron({ position, size = 0.3, speed = 0.15 }: { position: [number, number, number]; size?: number; speed?: number }) {
-  const ref = useRef<THREE.Mesh>(null);
+// ─── NEON GRID FLOOR ───
+function NeonGrid() {
+  const ref = useRef<THREE.Group>(null);
+
+  const gridLines = useMemo(() => {
+    const lines: { start: THREE.Vector3; end: THREE.Vector3 }[] = [];
+    const size = 30;
+    const divisions = 30;
+    const step = size / divisions;
+    const half = size / 2;
+
+    for (let i = 0; i <= divisions; i++) {
+      const pos = -half + i * step;
+      lines.push({ start: new THREE.Vector3(pos, 0, -half), end: new THREE.Vector3(pos, 0, half) });
+      lines.push({ start: new THREE.Vector3(-half, 0, pos), end: new THREE.Vector3(half, 0, pos) });
+    }
+    return lines;
+  }, []);
 
   useFrame((state) => {
     if (ref.current) {
-      ref.current.rotation.x = state.clock.elapsedTime * speed;
-      ref.current.rotation.y = state.clock.elapsedTime * speed * 1.3;
+      ref.current.position.z = (state.clock.elapsedTime * 0.5) % 1;
     }
   });
 
   return (
-    <Float speed={0.8} rotationIntensity={0.15} floatIntensity={0.5}>
-      <mesh ref={ref} position={position}>
-        <octahedronGeometry args={[size]} />
-        <meshStandardMaterial color="#ffffff" wireframe transparent opacity={0.08} emissive="#ffffff" emissiveIntensity={0.03} />
+    <group ref={ref} position={[0, -4, 0]}>
+      {gridLines.map((line, i) => {
+        const geo = new THREE.BufferGeometry().setFromPoints([line.start, line.end]);
+        return (
+          <lineSegments key={i} geometry={geo}>
+            <lineBasicMaterial color="#ffffff" transparent opacity={0.035} />
+          </lineSegments>
+        );
+      })}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.1, 0]}>
+        <planeGeometry args={[30, 30]} />
+        <meshBasicMaterial color="#ffffff" transparent opacity={0.008} />
       </mesh>
+    </group>
+  );
+}
+
+// ─── FLOATING HASH # — code comment symbol ───
+function HashSymbol({ position, scale = 1, speed = 0.1 }: { position: [number, number, number]; scale?: number; speed?: number }) {
+  const ref = useRef<THREE.Group>(null);
+
+  const hashGeo = useMemo(() => {
+    const vertices = new Float32Array([
+      // Two vertical lines
+      -0.15, 0.4, 0, -0.15, -0.4, 0,
+      0.15, 0.4, 0, 0.15, -0.4, 0,
+      // Two horizontal lines
+      -0.3, 0.15, 0, 0.3, 0.15, 0,
+      -0.3, -0.15, 0, 0.3, -0.15, 0,
+    ]);
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
+    return geo;
+  }, []);
+
+  useFrame((state) => {
+    if (ref.current) {
+      ref.current.rotation.z = Math.sin(state.clock.elapsedTime * speed) * 0.2;
+      ref.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.4 + position[0]) * 0.2;
+    }
+  });
+
+  return (
+    <Float speed={0.6} rotationIntensity={0.1} floatIntensity={0.3}>
+      <group ref={ref} position={position} scale={scale}>
+        <lineSegments geometry={hashGeo}>
+          <lineBasicMaterial color="#ffffff" transparent opacity={0.15} />
+        </lineSegments>
+      </group>
+    </Float>
+  );
+}
+
+// ─── SEMICOLON — every dev's friend ───
+function Semicolon({ position, scale = 1 }: { position: [number, number, number]; scale?: number }) {
+  const ref = useRef<THREE.Group>(null);
+
+  useFrame((state) => {
+    if (ref.current) {
+      ref.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.3) * 0.15;
+      ref.current.rotation.z = Math.sin(state.clock.elapsedTime * 0.2) * 0.1;
+    }
+  });
+
+  return (
+    <Float speed={0.5} rotationIntensity={0.05} floatIntensity={0.2}>
+      <group ref={ref} position={position} scale={scale}>
+        {/* Dot */}
+        <mesh position={[0, 0.12, 0]}>
+          <sphereGeometry args={[0.04, 8, 8]} />
+          <meshBasicMaterial color="#ffffff" transparent opacity={0.2} />
+        </mesh>
+        {/* Comma part */}
+        <mesh position={[0.01, -0.08, 0]} rotation={[0, 0, -0.3]}>
+          <sphereGeometry args={[0.04, 8, 8]} />
+          <meshBasicMaterial color="#ffffff" transparent opacity={0.2} />
+        </mesh>
+        <mesh position={[0.03, -0.16, 0]}>
+          <sphereGeometry args={[0.025, 6, 6]} />
+          <meshBasicMaterial color="#ffffff" transparent opacity={0.12} />
+        </mesh>
+      </group>
     </Float>
   );
 }
@@ -462,26 +541,41 @@ export default function Scene3D({ className = "" }: { className?: string }) {
         <pointLight position={[-10, -10, -5]} intensity={0.08} color="#ffffff" />
         <pointLight position={[0, 5, 5]} intensity={0.1} color="#ffffff" />
         <Stars radius={80} depth={80} count={2500} factor={1.8} saturation={0} fade speed={0.2} />
+        
         <Particles />
         <CentralSphere />
-        <GlowingTorusKnot />
         <NeonGrid />
-        <DNAHelix />
         <CircuitLines />
         <BinaryRain />
-        <CodeBracket position={[-4, 2, -2]} scale={1.8} speed={0.15} />
-        <CodeBracket position={[4, -1.5, -3]} scale={1.4} speed={0.1} />
-        <CodeBracket position={[-2, -3, -4]} scale={1} speed={0.12} />
+
+        {/* Developer symbols — { } < /> # ; */}
+        <CurlyBrace position={[-4.5, 2, -2]} scale={2} speed={0.12} />
+        <CurlyBrace position={[4.5, 2, -2]} scale={2} speed={0.12} mirror />
+        <CurlyBrace position={[-2, -3, -4]} scale={1.3} speed={0.08} />
+        <CurlyBrace position={[2.5, -2.5, -5]} scale={1.3} speed={0.1} mirror />
+
+        <AngleBracket position={[-3.5, 1.5, -3]} scale={1.5} speed={0.15} type="open" />
+        <AngleBracket position={[3.5, -1, -3]} scale={1.5} speed={0.1} type="close" />
+        <AngleBracket position={[0, 3.5, -5]} scale={1.2} speed={0.08} type="self-close" />
+
+        <HashSymbol position={[-5, -1, -4]} scale={1.8} speed={0.1} />
+        <HashSymbol position={[5.5, 3, -5]} scale={1.4} speed={0.12} />
+
+        <Semicolon position={[6, 0, -3]} scale={2} />
+        <Semicolon position={[-3, 3.5, -4]} scale={1.5} />
+
+        {/* Terminal windows */}
+        <TerminalWindow position={[-5, 1.5, -6]} scale={0.8} />
+        <TerminalWindow position={[5, -1.5, -7]} scale={0.7} />
+
         <TerminalCursor position={[5, 3, -2]} />
         <TerminalCursor position={[-3, -2, -3]} />
         <TerminalCursor position={[2, -4, -4]} />
+
         <DataCube position={[5, 2.5, -4]} size={0.7} speed={0.08} />
         <DataCube position={[-5, -2, -3]} size={0.5} speed={0.12} />
         <DataCube position={[3, -3.5, -5]} size={0.4} speed={0.15} />
-        <DataCube position={[-2, 4, -6]} size={0.55} speed={0.1} />
-        <FloatingOctahedron position={[-6, 1, -4]} size={0.4} speed={0.1} />
-        <FloatingOctahedron position={[6, -2, -5]} size={0.35} speed={0.13} />
-        <FloatingOctahedron position={[0, 4, -7]} size={0.5} speed={0.08} />
+
         <OrbitRing radius={3.2} speed={0.1} tilt={0.5} opacity={0.05} />
         <OrbitRing radius={4.5} speed={-0.07} tilt={-0.3} opacity={0.03} />
         <OrbitRing radius={5.8} speed={0.05} tilt={0.8} opacity={0.02} />
