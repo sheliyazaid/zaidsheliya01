@@ -71,9 +71,9 @@ const services = [
 ];
 
 const stats = [
-  { value: "50+", label: "Projects" },
-  { value: "3+", label: "Years" },
-  { value: "30+", label: "Clients" },
+  { value: "10+", label: "Projects" },
+  { value: "1+", label: "Years" },
+  { value: "10+", label: "Clients" },
   { value: "100%", label: "Dedication" },
 ];
 
@@ -145,9 +145,8 @@ function InfiniteMarquee() {
         {[...items, ...items, ...items, ...items].map((item, i) => (
           <span
             key={i}
-            className={`font-heading font-extrabold tracking-[0.05em] ${
-              item === "✦" ? "text-foreground/[0.08] text-xl" : "text-foreground/[0.04] text-5xl md:text-7xl"
-            }`}
+            className={`font-heading font-extrabold tracking-[0.05em] ${item === "✦" ? "text-foreground/[0.08] text-xl" : "text-foreground/[0.04] text-5xl md:text-7xl"
+              }`}
           >
             {item}
           </span>
@@ -165,7 +164,7 @@ const Index = () => {
   const [activeFilter, setActiveFilter] = useState("All");
   const [form, setForm] = useState({ name: "", phone: "", message: "" });
   const [showTop, setShowTop] = useState(false);
-  
+
   // Typing animation
   const roles = ["Graphic Designer", "Frontend Developer", "UI/UX Designer", "Creative Thinker", "Brand Strategist"];
   const [roleIndex, setRoleIndex] = useState(0);
@@ -264,7 +263,7 @@ const Index = () => {
     <div ref={mainRef} className="relative">
       <CursorFollower />
       <ScrollProgress />
-      
+
       <Suspense fallback={null}>
         <ParticleBackground />
       </Suspense>
@@ -282,25 +281,25 @@ const Index = () => {
         <div className="orbital-glow w-[600px] h-[600px] bg-foreground/5 -top-48 -right-48" style={{ animation: "pulse-glow 6s ease-in-out infinite" }} />
         <div className="orbital-glow w-[500px] h-[500px] bg-foreground/3 -bottom-32 -left-32" style={{ animation: "pulse-glow 8s ease-in-out 2s infinite" }} />
         <div className="lens-flare top-1/4 right-1/4" />
-        
+
         {/* 3D Scene */}
         <Suspense fallback={null}>
           <Scene3D className="z-0" />
         </Suspense>
 
         {/* Side decorators */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2, duration: 1 }}
           className="absolute left-6 top-1/2 -translate-y-1/2 z-10 hidden lg:flex flex-col items-center gap-4"
         >
           <div className="w-px h-20 bg-gradient-to-b from-transparent via-foreground/10 to-transparent" />
           <span className="text-[8px] tracking-[0.3em] text-muted-foreground/30 uppercase font-mono [writing-mode:vertical-lr] rotate-180">
-            Portfolio 2025
+            Portfolio 2026
           </span>
           <div className="w-px h-20 bg-gradient-to-b from-transparent via-foreground/10 to-transparent" />
         </motion.div>
 
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2, duration: 1 }}
           className="absolute right-6 top-1/2 -translate-y-1/2 z-10 hidden lg:flex flex-col items-center gap-4"
         >
@@ -309,7 +308,7 @@ const Index = () => {
             { Icon: Github, href: "https://github.com/sheliyazaid" },
             { Icon: Linkedin, href: "https://www.linkedin.com/in/zaid-sheliya/" },
             { Icon: Instagram, href: "https://www.instagram.com/zaxd._.shelxya/" },
-            { Icon: Mail, href: "mailto:zaidsheliya16@gmail.com" },
+            // { Icon: Mail, href: "mailto:zaidsheliya16@gmail.com" },
           ].map(({ Icon, href }) => (
             <MagneticButton
               key={href}
@@ -495,10 +494,17 @@ const Index = () => {
           </div>
 
           <div className="gsap-fade-up max-w-2xl mx-auto text-center mb-24">
-            <p className="text-muted-foreground/70 leading-relaxed text-lg">
+            <p className="text-muted-foreground/70 leading-relaxed text-lg text-justify">
               I'm <span className="text-foreground font-medium">Zaid Sheliya</span> — a designer who codes and a developer who designs.
-              I create digital experiences that are both visually stunning and technically sound.
+              I specialize in creating digital experiences that are not only visually stunning but also technically strong,
+              smooth, and user-focused. With a passion for both creativity and logic, I blend modern design principles
+              with clean, efficient code to build interfaces that feel intuitive and engaging.
+
+              I enjoy turning ideas into meaningful visuals, responsive websites, and interactive experiences that leave
+              a lasting impression. My approach is centered around simplicity, attention to detail, and crafting designs
+              that communicate clearly while performing flawlessly across devices.
             </p>
+
           </div>
 
           {/* Stats */}
@@ -583,11 +589,10 @@ const Index = () => {
               <button
                 key={cat}
                 onClick={() => setActiveFilter(cat)}
-                className={`rounded-full px-7 py-2.5 text-[10px] tracking-[0.2em] uppercase font-mono transition-all duration-500 ${
-                  activeFilter === cat
+                className={`rounded-full px-7 py-2.5 text-[10px] tracking-[0.2em] uppercase font-mono transition-all duration-500 ${activeFilter === cat
                     ? "glass-strong text-foreground glow-sm animated-gradient-border"
                     : "text-muted-foreground/50 hover:text-foreground border border-transparent hover:border-border/20"
-                }`}
+                  }`}
               >
                 {cat}
               </button>
@@ -663,7 +668,7 @@ const Index = () => {
                 className="group relative glass-strong gradient-border rounded-2xl p-8 overflow-hidden"
               >
                 <div className={`absolute inset-0 bg-gradient-to-br ${service.accent} opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-2xl`} />
-                
+
                 <div className="relative z-10">
                   <motion.div
                     className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border border-border/30 glass"
@@ -703,9 +708,8 @@ const Index = () => {
                 viewport={{ once: false, amount: 0.2 }}
                 transition={{ delay: i * 0.07, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                 whileHover={{ y: -6, scale: 1.02 }}
-                className={`group relative glass-strong gradient-border rounded-2xl p-7 overflow-hidden ${
-                  t.featured ? "md:row-span-2 flex flex-col justify-between" : ""
-                }`}
+                className={`group relative glass-strong gradient-border rounded-2xl p-7 overflow-hidden ${t.featured ? "md:row-span-2 flex flex-col justify-between" : ""
+                  }`}
                 style={{ perspective: "800px" }}
               >
                 <div className={`absolute inset-0 bg-gradient-to-br ${t.accent} opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-2xl`} />
@@ -801,13 +805,13 @@ const Index = () => {
                   className="w-full glass-strong animated-gradient-border rounded-xl py-4 text-sm font-medium tracking-[0.15em] uppercase text-foreground flex items-center justify-center gap-3 hover:glow-md transition-all duration-500"
                 >
                   <Send size={13} />
-                  Send via WhatsApp
+                  Send Message
                 </MagneticButton>
               </form>
-              <div className="mt-6 flex items-center justify-center gap-2 text-muted-foreground/30 relative z-10">
+              {/* <div className="mt-6 flex items-center justify-center gap-2 text-muted-foreground/30 relative z-10">
                 <MessageCircle size={11} />
                 <span className="text-[8px] tracking-[0.25em] font-mono uppercase">Opens WhatsApp directly</span>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
@@ -846,7 +850,7 @@ const Index = () => {
                   { Icon: Github, label: "GitHub", href: "https://github.com/sheliyazaid" },
                   { Icon: Linkedin, label: "LinkedIn", href: "https://www.linkedin.com/in/zaid-sheliya/" },
                   { Icon: Instagram, label: "Instagram", href: "https://www.instagram.com/zaxd._.shelxya/" },
-                  { Icon: Mail, label: "Email", href: "mailto:zaidsheliya16@gmail.com" },
+                  // { Icon: Mail, label: "Email", href: "mailto:zaidsheliya16@gmail.com" },
                 ].map(({ Icon, label, href }) => (
                   <MagneticButton
                     key={label}
@@ -862,15 +866,15 @@ const Index = () => {
               </p>
             </div>
           </div>
-          <div className="section-divider" />
-          <div className="py-8 flex flex-col md:flex-row items-center justify-between gap-4">
+          {/* <div className="section-divider" /> */}
+          {/* <div className="py-8 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-[9px] text-muted-foreground/30 tracking-[0.15em] font-mono">
               © {new Date().getFullYear()} Zaid Sheliya. All rights reserved.
             </p>
             <p className="text-[9px] text-muted-foreground/30 tracking-[0.15em] font-mono flex items-center gap-1.5">
               Designed & Built with <Heart size={9} className="text-foreground/20" /> in India
             </p>
-          </div>
+          </div> */}
         </div>
       </footer>
 
