@@ -11,7 +11,7 @@ const ParticleBackground = lazy(() => import("../components/ParticleBackground")
 const categories = ["All", "Graphic Design", "Frontend"];
 
 const projects = [
-  { title: "Brand Identity System", category: "Graphic Design", description: "Complete brand identity for a luxury fashion label." },
+  { title: "E-Commerce Website", category: "Graphic Design", description: "Complete brand identity for a luxury fashion label." },
   { title: "Social Media Campaign", category: "Graphic Design", description: "Visual campaign for a tech startup launch." },
   { title: "Editorial Layout", category: "Graphic Design", description: "Magazine-style editorial design with bold typography." },
   { title: "Product Packaging", category: "Graphic Design", description: "Minimalist packaging design for a skincare brand." },

@@ -10,14 +10,15 @@ import ScrollProgress from "../components/ScrollProgress";
 import CursorFollower from "../components/CursorFollower";
 
 // Project images
-import imgBrand from "@/assets/project-brand.jpg";
-import imgSocial from "@/assets/project-social.jpg";
-import imgEditorial from "@/assets/project-editorial.jpg";
-import imgPackaging from "@/assets/project-packaging.jpg";
-import imgPortfolio from "@/assets/project-portfolio.jpg";
-import imgEcommerce from "@/assets/project-ecommerce.jpg";
-import imgDashboard from "@/assets/project-dashboard.jpg";
-import imgLanding from "@/assets/project-landing.jpg";
+import imgBrand from "@/assets/Trendy Finds.png";
+import imgSocial from "@/assets/Sealventures.png";
+import imgEditorial from "@/assets/layout.png";
+import imgPackaging from "@/assets/ProductPackaging.png";
+import imgPortfolio from "@/assets/Qremsia.png";
+import imgEcommerce from "@/assets/CashMitra.png";
+import imgDashboard from "@/assets/jobConnect.png";
+import imgLanding from "@/assets/Design.jpeg";
+import { link } from "fs";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -53,21 +54,21 @@ const highlights = [
 ];
 
 const projects = [
-  { title: "Brand Identity System", category: "Graphic Design", description: "Complete brand identity for a luxury fashion label.", image: imgBrand },
-  { title: "Social Media Campaign", category: "Graphic Design", description: "Visual campaign for a tech startup launch.", image: imgSocial },
-  { title: "Editorial Layout", category: "Graphic Design", description: "Magazine-style editorial design with bold typography.", image: imgEditorial },
-  { title: "Product Packaging", category: "Graphic Design", description: "Minimalist packaging design for a skincare brand.", image: imgPackaging },
-  { title: "Portfolio Website", category: "Frontend", description: "Interactive portfolio built with React and Three.js.", image: imgPortfolio },
-  { title: "E-Commerce UI", category: "Frontend", description: "Modern e-commerce interface with smooth animations.", image: imgEcommerce },
-  { title: "Dashboard App", category: "Frontend", description: "Real-time analytics dashboard with data visualization.", image: imgDashboard },
-  { title: "Landing Page", category: "Frontend", description: "High-converting SaaS landing page with parallax effects.", image: imgLanding },
+  { title: "Trendy Finds", category: "Web Development", description: "Complete e-commerce solution for online store setup and growth.", image: imgBrand, link: "https://trendyfinds.netlify.app/" },
+  { title: "Sealventures", category: "Web Development", description: "Clean, modern website with a premium user experience.", image: imgSocial, link: "https://sealventuresindia.netlify.app/" },
+  { title: "Editorial Layout", category: "Graphic Design", description: "Sweet box design with elegant visuals and bold detailing.", image: imgEditorial, link: "https://drive.google.com/uc?export=view&id=1dmT_Vj387gd9jWqcA6LqYiX7zVeo7WLR" },
+  { title: "Product Packaging", category: "Graphic Design", description: "Minimalist packaging design for a sweet shop brand.", image: imgPackaging, link: "https://drive.google.com/uc?export=view&id=1fKxiDflfrbZ8yjNR2TTV3had_QknMCWr" },
+  { title: "Qremsia", category: "Web Development", description: "High-end website crafted with modern frontend technologies, delivering a sleek and premium user experience.", image: imgPortfolio, link: "https://www.qremsia.com/" },
+  { title: "CashMitra", category: "Web Development", description: "Clean finance website with a modern and engaging interface.", image: imgEcommerce, link: "https://sit.cashmitra.com/" },
+  { title: "JobConnect", category: "Web Development", description: "Real-time analytics dashboard with data visualization.", image: imgDashboard, link: "https://job-connect-woad.vercel.app/" },
+  { title: "Visiting Card", category: "Graphic Design", description: "Professional visiting card design with clean layout and refined typography.", image: imgLanding, link: "https://drive.google.com/uc?export=view&id=1G_5nJ0lbmaI2JKs43GeKeKZ74pTSLkq6" },
 ];
 
 const services = [
   { icon: Palette, title: "UI/UX Design", description: "Crafting intuitive and beautiful user interfaces that put the user experience first.", accent: "from-purple-500/10 to-blue-500/10" },
   { icon: PenTool, title: "Logo Design", description: "Creating memorable brand identities that communicate your values.", accent: "from-amber-500/10 to-orange-500/10" },
   { icon: Globe, title: "Website Design", description: "Designing modern, responsive websites that convert visitors into customers.", accent: "from-cyan-500/10 to-teal-500/10" },
-  { icon: Code, title: "Frontend Development", description: "Building fast, interactive web applications with React & TypeScript.", accent: "from-emerald-500/10 to-green-500/10" },
+  { icon: Code, title: "Website Development", description: "Building fast, interactive web applications with React & TypeScript.", accent: "from-emerald-500/10 to-green-500/10" },
 ];
 
 const stats = [
@@ -78,15 +79,15 @@ const stats = [
 ];
 
 const testimonials = [
-  { name: "Arjun Patel", role: "CEO, TechVibe Studios", quote: "Zaid turned our vague idea into a brand that people actually recognize. His design sense is on another level — every pixel feels intentional.", featured: true, accent: "from-purple-500/10 to-blue-500/10" },
-  { name: "Sneha Kapoor", role: "Founder, Luxe & Co", quote: "The attention to detail is insane. Delivered ahead of schedule with quality that exceeded expectations.", featured: false, accent: "from-amber-500/10 to-orange-500/10" },
-  { name: "Rahul Sharma", role: "CTO, DevStack", quote: "Clean code, modern UI, and he actually understands both design AND development. Rare combo.", featured: false, accent: "from-cyan-500/10 to-teal-500/10" },
-  { name: "Priya Mehta", role: "Marketing Head, Bloom Agency", quote: "Our conversion rate jumped 40% after Zaid redesigned our landing page. The ROI speaks for itself.", featured: true, accent: "from-emerald-500/10 to-green-500/10" },
-  { name: "Vikram Desai", role: "Indie Filmmaker", quote: "He made my portfolio feel like a cinematic experience. People think I hired a whole agency.", featured: false, accent: "from-rose-500/10 to-pink-500/10" },
-  { name: "Ananya Iyer", role: "Product Designer, Nexus", quote: "Zaid's work ethic is unmatched. Fast communication, creative solutions, and zero drama. 10/10 would hire again.", featured: false, accent: "from-violet-500/10 to-indigo-500/10" },
+  { name: "Sadaf Patel", role: "Owner, Trendy Finds", quote: "I entrusted Zaid with building our e-commerce website, and the results exceeded all expectations. He transformed our vision into a seamless, high-performing platform with a clean design and exceptional user experience. His attention to detail and professionalism truly set his work apart.", featured: true, accent: "from-purple-500/10 to-blue-500/10" },
+  { name: "Maviya Kadiwal", role: "CEO, Sealventures", quote: "Zaid developed a high-quality website for our brand that perfectly reflects our vision. The execution was seamless, the design was modern and professional, and the overall experience exceeded our expectations.", featured: false, accent: "from-amber-500/10 to-orange-500/10" },
+  { name: "Riyaz Abdul Hamid", role: "CEO, Qremsia", quote: "Zaid built a stunning website for our bakery with a warm, modern design and a truly professional feel... 🍰🔥", featured: false, accent: "from-cyan-500/10 to-teal-500/10" },
+  { name: "Ayesha Aglodiya", role: "Owner, Ayesha Arts", quote: "Zaid developed a highly professional website for Ayesha Arts that not only reflects our brand identity beautifully but also plays a key role in attracting online customers. The design, functionality, and overall user experience have significantly improved our digital presence and helped us connect with a wider audience. His work truly delivers both quality and results.", featured: true, accent: "from-emerald-500/10 to-green-500/10" },
+  { name: "Javid Patel", role: "Owner, Hotel Shaan", quote: "Zaid handles all our hotel design needs with great professionalism. His work is consistently high-quality and truly stands out.", featured: false, accent: "from-rose-500/10 to-pink-500/10" },
+  { name: "Rafik Dauwa", role: "Owner, Arfa Sweets", quote: "Working with Zaid has been a great experience for our sweet shop. His designs bring a fresh and appealing look that perfectly connects with our customers.", featured: false, accent: "from-violet-500/10 to-indigo-500/10" },
 ];
 
-const categories = ["All", "Graphic Design", "Frontend"];
+const categories = ["All", "Graphic Design", "Web Development"];
 
 // ─── SKILL BAR ────────────────────────────────────
 function SkillBar({ name, level, delay }: { name: string; level: number; delay: number }) {
@@ -166,7 +167,7 @@ const Index = () => {
   const [showTop, setShowTop] = useState(false);
 
   // Typing animation
-  const roles = ["Graphic Designer", "Frontend Developer", "UI/UX Designer", "Creative Thinker", "Brand Strategist"];
+  const roles = ["Graphic Designer", "Web Developer", "UI/UX Designer", "Creative Thinker", "Brand Strategist"];
   const [roleIndex, setRoleIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -463,12 +464,12 @@ const Index = () => {
             </div>
 
             {/* Scroll */}
-            <div className="flex flex-col items-center gap-2 mx-auto md:mx-0">
+            {/* <div className="flex flex-col items-center gap-2 mx-auto md:mx-0">
               <span className="text-[8px] tracking-[0.35em] text-muted-foreground/25 uppercase font-mono">Scroll down</span>
               <motion.div animate={{ y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}>
                 <ArrowDown size={12} className="text-muted-foreground/25" />
               </motion.div>
-            </div>
+            </div> */}
 
             {/* Mini stats right */}
             <div className="hidden md:flex items-center gap-8">
@@ -590,8 +591,8 @@ const Index = () => {
                 key={cat}
                 onClick={() => setActiveFilter(cat)}
                 className={`rounded-full px-7 py-2.5 text-[10px] tracking-[0.2em] uppercase font-mono transition-all duration-500 ${activeFilter === cat
-                    ? "glass-strong text-foreground glow-sm animated-gradient-border"
-                    : "text-muted-foreground/50 hover:text-foreground border border-transparent hover:border-border/20"
+                  ? "glass-strong text-foreground glow-sm animated-gradient-border"
+                  : "text-muted-foreground/50 hover:text-foreground border border-transparent hover:border-border/20"
                   }`}
               >
                 {cat}
@@ -626,9 +627,14 @@ const Index = () => {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent opacity-50 group-hover:opacity-80 transition-opacity duration-500" />
                       <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-2 group-hover:translate-y-0">
-                        <span className="flex items-center gap-2 text-[10px] font-mono text-foreground tracking-[0.2em] uppercase glass-strong rounded-full px-5 py-2">
+                        <a
+                          href={project.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 text-[10px] font-mono text-foreground tracking-[0.2em] uppercase glass-strong rounded-full px-5 py-2"
+                        >
                           <ExternalLink size={11} /> View Project
-                        </span>
+                        </a>
                       </div>
                     </div>
                     <div className="p-5">
